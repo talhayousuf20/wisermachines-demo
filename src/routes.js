@@ -40,7 +40,7 @@ var routes = [
 		path: '/user-profile',
 		name: 'User Profile',
 		icon: 'ni ni-single-02 text-yellow',
-		component: Profile,
+		component: Index,
 		layout: '/admin',
 	},
 	{

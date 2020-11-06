@@ -90,7 +90,7 @@ export const StateChart = (props) => {
 			},
             outlineColor: 'rgba(0,0,0,0)',
 			maskFill: 'rgba(0,0,0,0.1)',
-			enabled: true,
+			enabled: false,
 			liveRedraw: true,
             margin: 5,
 		},

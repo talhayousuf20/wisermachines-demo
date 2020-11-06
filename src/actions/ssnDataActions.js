@@ -13,7 +13,6 @@ export const connectToWebSocketServer = () => {
 
 export const fetchSSNData = () => (dispatch) => {
 	client.on('message', (packets) => {
-		console.log(packets);
 		dispatch({
 			type: FETCH_SSNDATA,
 			payload: packets,
