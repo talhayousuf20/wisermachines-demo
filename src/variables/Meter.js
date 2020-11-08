@@ -6,75 +6,84 @@ import Chart from "react-apexcharts";
 
 import { cardStyle } from "../common/inlineStyles";
 
-const options = {
-  chart: {
-    type: "radialBar",
-  },
-  fill: {
-    type: "gradient",
-    gradient: {
-      shade: "dark",
-      type: "horizontal",
-      shadeIntensity: 0.5,
-      gradientToColors: ["#ABE5A1"],
-      inverseColors: true,
-      opacityFrom: 1,
-      opacityTo: 1,
-      stops: [0, 100],
-    },
-  },
-  stroke: {
-    lineCap: "round",
-  },
-  plotOptions: {
-    radialBar: {
-      // startAngle: -135,
-      // endAngle: 225,
-      hollow: {
-        margin: 0,
-        size: "60%",
-        background: "#fff",
-        image: undefined,
-        position: "front",
-        dropShadow: {
-          enabled: true,
-          top: 3,
-          left: 0,
-          blur: 4,
-          opacity: 0.24,
-        },
-      },
-      track: {
-        background: "#EFEFEF",
-        strokeWidth: "90%",
-        margin: 0, // margin is in pixels
-        // dropShadow: {
-        //   enabled: true,
-        //   top: -3,
-        //   left: 0,
-        //   blur: 4,
-        //   opacity: 0.35,
-        // },
-      },
+const colors = (props) => {
+  if (props.colors) {
+    return props.colors;
+  } else return ["#ABE5A1"];
+};
 
-      dataLabels: {
-        show: true,
-        name: {
-          show: false,
+const options = (props) => {
+  return {
+    chart: {
+      type: "radialBar",
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "dark",
+        type: "horizontal",
+        shadeIntensity: 0.5,
+        gradientToColors: colors(props),
+        inverseColors: true,
+        opacityFrom: 1,
+        opacityTo: 1,
+        stops: [0, 100],
+      },
+    },
+    stroke: {
+      lineCap: "round",
+    },
+    plotOptions: {
+      radialBar: {
+        // startAngle: -135,
+        // endAngle: 225,
+        hollow: {
+          margin: 0,
+          size: "70%",
+          background: "#fff",
+          image: undefined,
+          position: "front",
+          dropShadow: {
+            enabled: true,
+            top: 3,
+            left: 0,
+            blur: 4,
+            opacity: 0.24,
+          },
         },
-        value: {
-          fontSize: "100%",
-          fontWeight: "bold",
+        track: {
+          background: "#EFEFEF",
+          strokeWidth: "100%",
+          margin: 0, // margin is in pixels
+          // dropShadow: {
+          //   enabled: true,
+          //   top: -3,
+          //   left: 0,
+          //   blur: 4,
+          //   opacity: 0.35,
+          // },
+        },
+
+        dataLabels: {
           show: true,
-          offsetY: 5,
+          name: {
+            show: false,
+          },
+          value: {
+            fontSize: "100%",
+            fontWeight: "bold",
+            show: true,
+            offsetY: 5,
+          },
         },
       },
     },
-  },
-  labels: ["Percent"],
+    labels: ["Percent"],
+  };
 };
 
 export const Meter = (props) => {
+  const [optionsState, setOptions] = useState(options(props));
   const [variables, setVariables] = useState({
     series: [0],
     since: null,
@@ -106,11 +115,10 @@ export const Meter = (props) => {
               }}
             >
               <Chart
-                options={options}
+                options={optionsState}
                 series={variables.series}
                 type="radialBar"
-                height={150}
-                width={"100%"}
+                height={250}
               />
             </div>
           </Col>

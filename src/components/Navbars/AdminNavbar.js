@@ -51,18 +51,23 @@ class AdminNavbar extends React.Component {
           <Container fluid>
             <NavbarBrand className="pt-2">
               <Media className="align-items-center">
-                <span>
+                <div>
                   <img
                     lassName="navbar-brand-img"
                     src={require("../../assets/img/brand/logo.png")}
                     width="100px"
                   />
-                </span>
-                <Media className="ml-3 d-none d-lg-block">
-                  <span className="mb-0 text-lg font-weight-bold">
-                    WISERMACHINES
-                  </span>
-                </Media>
+                  <div
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: "60%",
+                      textAlign: "center",
+                      marginTop: "5px",
+                    }}
+                  >
+                    WiserMachines
+                  </div>
+                </div>
               </Media>
             </NavbarBrand>
             {/* <Link

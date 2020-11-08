@@ -100,6 +100,7 @@ class Index extends React.Component {
         value={this.state.dataFromSSN.utilization.value}
         since={this.state.dataFromSSN.utilization.since}
         title={"Utilization"}
+        colors={["#ABE5A1"]}
       />
     );
 
@@ -108,6 +109,7 @@ class Index extends React.Component {
         value={this.state.dataFromSSN.utilization.value}
         since={this.state.dataFromSSN.utilization.since}
         title={"OEE"}
+        colors={["#DBA1E5"]}
       />
     );
 
@@ -139,6 +141,22 @@ class Index extends React.Component {
       <HumidityCard value={this.state.dataFromSSN.humidity} />
     );
 
+    const uptimeCard = (
+      <UptimeDowntime
+        value={30}
+        title={"Uptime"}
+        unit={"minutes in last hour"}
+      />
+    );
+
+    const downtimeCard = (
+      <UptimeDowntime
+        value={10}
+        title={"Downtime"}
+        unit={"minutes in last hour"}
+      />
+    );
+
     return (
       <>
         <Header />
@@ -154,20 +172,29 @@ class Index extends React.Component {
                 <Card className="card-stats" style={cardStyle}>
                   <CardBody>{machineInfo}</CardBody>
                 </Card>
-
+              </CardDeck>
+            </Col>
+          </Row>
+          <Row>
+            <Col className="mb-3">
+              <CardDeck style={{ display: "flex" }}>
                 <Card className="card-stats" style={cardStyle}>
                   <CardBody>{temperatureCard}</CardBody>
                   <CardBody>{humidityCard}</CardBody>
                 </Card>
 
                 <Card className="card-stats" style={cardStyle}>
+                  <CardBody>{uptimeCard}</CardBody>
+                  <CardBody>{downtimeCard}</CardBody>
+                </Card>
+
+                <Card className="card-stats" style={cardStyle}>
                   <CardBody>{utilizationMeter}</CardBody>
                 </Card>
 
-				<Card className="card-stats" style={cardStyle}>
+                <Card className="card-stats" style={cardStyle}>
                   <CardBody>{OEEMeter}</CardBody>
                 </Card>
-
               </CardDeck>
             </Col>
           </Row>

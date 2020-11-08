@@ -18,16 +18,14 @@ const InfoCard = (props) => {
         <br />
         <Row>
           <Col>
-            <div>
-              <strong>{props.fields[0]}</strong>
-              <p>{props.values[0]}</p>
-            </div>
-
-            <div>
-              <strong>{props.fields[1]}</strong>
-              <p>{props.values[1]}</p>
-            </div>
-
+            <strong>{props.fields[0]}</strong>
+            <p>{props.values[0]}</p>
+          </Col>
+          <Col>
+            <strong>{props.fields[1]}</strong>
+            <p>{props.values[1]}</p>
+          </Col>
+          <Col>
             <div>
               <strong>{props.fields[2]}</strong>
               <p>{props.values[2]}</p>
