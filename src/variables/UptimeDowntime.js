@@ -32,28 +32,30 @@ const UptimeDowntime = (props) => {
           </Col>
         </Row>
 
-        <Row>
-          <Col>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+        <Row
+          style={{
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span
+              className={`icon icon-shape bg-${iconColor(
+                props.value
+              )} text-white rounded-circle shadow `}
             >
-              <span
-                className={`icon icon-shape bg-${iconColor(
-                  props.value
-                )} text-white rounded-circle shadow `}
-              >
-                <i class={`${upOrDown(props.title)}`}></i>
-              </span>
-              <span className="mr-4"></span>
-              <span className={`text-${iconColor(props.value)}`}>
-                <span style={{ fontSize: "300%" }}>{props.value}</span>
-              </span>
-            </div>
-          </Col>
+              <i class={`${upOrDown(props.title)}`}></i>
+            </span>
+            <span className="mr-4"></span>
+            <span className={`text-${iconColor(props.value)}`}>
+              <span style={{ fontSize: "300%" }}>{props.value}</span>
+            </span>
+          </div>
         </Row>
         <Row>
           <Col>

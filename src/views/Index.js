@@ -8,10 +8,12 @@ import TemperatureCard from "../variables/TemperatureCard";
 import HumidityCard from "../variables/HumidityCard";
 import InfoCard from "../variables/InfoCard";
 import UptimeDowntime from "../variables/UptimeDowntime";
+import DateTime from "../variables/DateTime";
 
 import { cardStyle } from "../common/inlineStyles";
 
 import { parsePacketsFromSSN } from "../utils/parse";
+import { isEmpty } from "../utils/parse";
 
 import {
   Button,
@@ -56,24 +58,35 @@ class Index extends React.Component {
         },
         machine1State: [],
         utilization: {
-          value: 60,
-          since: "For Last Hour",
+          value: 0,
+          since: "",
         },
-        temperature: 60,
-        humidity: 20,
+        temperature: 25,
+        humidity: 30,
+        uptime: 0,
+        downtime: 0,
+        time: "",
+        date: "",
       },
       activeNav: 1,
     };
   }
 
   componentDidMount() {
-    // client.on("message", (packets) => {
-    //   this.setState({
-    //     dataFromSSN: parsePacketsFromSSN(packets),
-    //   });
-    // });
-    // set interval, eg 5 sec
-    // re-create chart container
+    client.on("message", (packets) => {
+      console.log("Latest Packet:", packets.slice(-1));
+      console.log("No. of Packets:", packets.length);
+      if (!isEmpty(packets)) {
+        const parsedPackets = parsePacketsFromSSN(packets);
+
+        if (parsedPackets.newData) {
+          console.log("New Data:", parsedPackets.newData);
+          this.setState({
+            dataFromSSN: parsedPackets,
+          });
+        }
+      } else console.log("No data from SSN");
+    });
   }
 
   toggleNavs = (e, index) => {
@@ -134,16 +147,19 @@ class Index extends React.Component {
     );
 
     const temperatureCard = (
-      <TemperatureCard value={this.state.dataFromSSN.temperature} />
+      <TemperatureCard
+        value={this.state.dataFromSSN.temperature}
+        unit={"\u00B0Celcius"}
+      />
     );
 
     const humidityCard = (
-      <HumidityCard value={this.state.dataFromSSN.humidity} />
+      <HumidityCard value={this.state.dataFromSSN.humidity} unit={"%RH"} />
     );
 
     const uptimeCard = (
       <UptimeDowntime
-        value={30}
+        value={this.state.dataFromSSN.uptime}
         title={"Uptime"}
         unit={"minutes in last hour"}
       />
@@ -151,9 +167,16 @@ class Index extends React.Component {
 
     const downtimeCard = (
       <UptimeDowntime
-        value={10}
+        value={this.state.dataFromSSN.downtime}
         title={"Downtime"}
         unit={"minutes in last hour"}
+      />
+    );
+
+    const dateTimeCard = (
+      <DateTime
+        time={this.state.dataFromSSN.time}
+        date={this.state.dataFromSSN.date}
       />
     );
 
@@ -171,6 +194,10 @@ class Index extends React.Component {
 
                 <Card className="card-stats" style={cardStyle}>
                   <CardBody>{machineInfo}</CardBody>
+                </Card>
+
+                <Card className="card-stats" style={cardStyle}>
+                  <CardBody>{dateTimeCard}</CardBody>
                 </Card>
               </CardDeck>
             </Col>

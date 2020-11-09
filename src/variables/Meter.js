@@ -70,10 +70,10 @@ const options = (props) => {
             show: false,
           },
           value: {
-            fontSize: "100%",
-            fontWeight: "bold",
+            fontSize: "300%",
+            fontWeight: "",
             show: true,
-            offsetY: 5,
+            textAnchor: 'middle',
           },
         },
       },
@@ -119,6 +119,7 @@ export const Meter = (props) => {
                 series={variables.series}
                 type="radialBar"
                 height={250}
+                width={"120%"}
               />
             </div>
           </Col>

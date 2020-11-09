@@ -20,7 +20,32 @@ const HumidityCard = (props) => {
             <span className="h2 font-weight-bold mb-0">Humidity</span>
           </Col>
         </Row>
-        <Row >
+        <Row
+          style={{
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span
+              className={`icon icon-shape bg-${iconColor(
+                props.value
+              )} text-white rounded-circle shadow `}
+            >
+              <i class="fa fa-tint"></i>
+            </span>
+            <span className="mr-4"></span>
+            <span className={`text-${iconColor(props.value)}`}>
+              <span style={{ fontSize: "300%" }}>{props.value}</span>
+            </span>
+          </div>
+        </Row>
+        <Row>
           <Col>
             <div
               style={{
@@ -29,17 +54,8 @@ const HumidityCard = (props) => {
                 justifyContent: "center",
               }}
             >
-              <span
-                className={`icon icon-shape bg-${iconColor(
-                  props.value
-                )} text-white rounded-circle shadow `}
-              >
-                <i class="fa fa-tint"></i>
-              </span>
-              <span className="mr-4"></span>
               <span className={`text-${iconColor(props.value)}`}>
-                <span style={{ fontSize: "300%" }}>{props.value}</span>
-                <span className="ml-1">%RH</span>
+                <span className="ml-1">{props.unit}</span>
               </span>
             </div>
           </Col>

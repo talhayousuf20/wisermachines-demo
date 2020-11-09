@@ -53,7 +53,7 @@ class AdminNavbar extends React.Component {
               <Media className="align-items-center">
                 <div>
                   <img
-                    lassName="navbar-brand-img"
+                    className="navbar-brand-img"
                     src={require("../../assets/img/brand/logo.png")}
                     width="100px"
                   />
