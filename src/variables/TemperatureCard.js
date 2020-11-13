@@ -17,7 +17,7 @@ const TemperatureCard = (props) => {
       <Container>
         <Row>
           <Col className="text-center">
-            <span className="h2 font-weight-bold mb-0">Temperature</span>
+            <span className="h3 font-weight-bold mb-0">Temperature</span>
           </Col>
         </Row>
 

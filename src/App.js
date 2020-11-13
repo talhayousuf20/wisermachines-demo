@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 
 import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth.js";
+import MachineDetails from "views/dashboards/MachineDetails";
 
 import store from "./store";
 
@@ -20,7 +21,7 @@ export default class App extends Component {
               render={(props) => <AdminLayout {...props} />}
             />
             <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
-            <Redirect from="/" to="/admin/index" />
+            <Redirect from="/" to="/admin/home" />
           </Switch>
         </BrowserRouter>
       </Provider>

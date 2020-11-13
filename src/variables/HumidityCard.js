@@ -17,7 +17,7 @@ const HumidityCard = (props) => {
       <Container>
         <Row>
           <Col className="text-center">
-            <span className="h2 font-weight-bold mb-0">Humidity</span>
+            <span className="h3 font-weight-bold mb-0">Humidity</span>
           </Col>
         </Row>
         <Row

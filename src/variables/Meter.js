@@ -73,7 +73,7 @@ const options = (props) => {
             fontSize: "300%",
             fontWeight: "",
             show: true,
-            textAnchor: 'middle',
+            textAnchor: "middle",
           },
         },
       },
@@ -101,7 +101,7 @@ export const Meter = (props) => {
       <Container>
         <Row>
           <Col className="text-center">
-            <span className="h2 font-weight-bold mb-0">{props.title}</span>
+            <span className="h3 font-weight-bold mb-0">{props.title}</span>
           </Col>
         </Row>
 

@@ -1,19 +1,21 @@
 import React from "react";
+import { Router, Route, browserHistory, IndexRoute } from "react-router";
+
 import classnames from "classnames";
 
-import { CurrentChart, StateChart } from "../variables/DynamicChart";
+import { CurrentChart, StateChart } from "../../variables/DynamicChart";
 // import { StateChart } from "../variables/StateChart";
-import { Meter } from "../variables/Meter";
-import TemperatureCard from "../variables/TemperatureCard";
-import HumidityCard from "../variables/HumidityCard";
-import InfoCard from "../variables/InfoCard";
-import UptimeDowntime from "../variables/UptimeDowntime";
-import DateTime from "../variables/DateTime";
+import { Meter } from "../../variables/Meter";
+import TemperatureCard from "../../variables/TemperatureCard";
+import HumidityCard from "../../variables/HumidityCard";
+import InfoCard from "../../variables/InfoCard";
+import UptimeDowntime from "../../variables/UptimeDowntime";
+import DateTime from "../../variables/DateTime";
 
-import { cardStyle } from "../common/inlineStyles";
+import { cardStyle } from "../../common/inlineStyles";
 
-import { parsePacketsFromSSN } from "../utils/parse";
-import { isEmpty } from "../utils/parse";
+import { parsePacketsFromSSN } from "../../utils/parse";
+import { isEmpty } from "../../utils/parse";
 
 import {
   Button,
@@ -34,19 +36,19 @@ import {
 import Header from "components/Headers/Header.js";
 
 import { connect } from "react-redux";
-import { fetchSSNData } from "../actions/ssnDataActions";
+import { fetchSSNData } from "../../actions/ssnDataActions";
 import PropTypes from "prop-types";
 
 import io from "socket.io-client";
 
 const SERVER_URL = "http://192.168.0.130:5000";
 
-const client = io(SERVER_URL, {
-  transports: ["websocket", "polling"],
-});
-client.emit("Start", "Start sending the data");
+// const client = io(SERVER_URL, {
+//   transports: ["websocket", "polling"],
+// });
+// client.emit("Start", "Start sending the data");
 
-class Index extends React.Component {
+class machinesDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -73,20 +75,19 @@ class Index extends React.Component {
   }
 
   componentDidMount() {
-    client.on("message", (packets) => {
-      console.log("Latest Packet:", packets.slice(-1));
-      console.log("No. of Packets:", packets.length);
-      if (!isEmpty(packets)) {
-        const parsedPackets = parsePacketsFromSSN(packets);
-
-        if (parsedPackets.newData) {
-          console.log("New Data:", parsedPackets.newData);
-          this.setState({
-            dataFromSSN: parsedPackets,
-          });
-        }
-      } else console.log("No data from SSN");
-    });
+    // client.on("message", (packets) => {
+    //   console.log("Latest Packet:", packets.slice(-1));
+    //   console.log("No. of Packets:", packets.length);
+    //   if (!isEmpty(packets)) {
+    //     const parsedPackets = parsePacketsFromSSN(packets);
+    //     if (parsedPackets.newData) {
+    //       console.log("New Data:", parsedPackets.newData);
+    //       this.setState({
+    //         dataFromSSN: parsedPackets,
+    //       });
+    //     }
+    //   } else console.log("No data from SSN");
+    // });
   }
 
   toggleNavs = (e, index) => {
@@ -97,6 +98,8 @@ class Index extends React.Component {
   };
 
   render() {
+    console.log(this.props.match.params.machine);
+
     const dynamicChartContainer =
       this.state.activeNav === 1 ? (
         <CardBody>
@@ -184,8 +187,8 @@ class Index extends React.Component {
       <>
         <Header />
         {/* Page content */}
-        <Container className="mt-3" fluid>
-          <Row>
+        <Container className="mt-1">
+          {/* <Row>
             <Col className="mb-3">
               <CardDeck style={{ display: "flex" }}>
                 <Card className="card-stats" style={cardStyle}>
@@ -201,7 +204,7 @@ class Index extends React.Component {
                 </Card>
               </CardDeck>
             </Col>
-          </Row>
+          </Row> */}
           <Row>
             <Col className="mb-3">
               <CardDeck style={{ display: "flex" }}>
@@ -553,8 +556,4 @@ class Index extends React.Component {
   }
 }
 
-Index.propTypes = {
-  fetchSSNData: PropTypes.func.isRequired,
-};
-
-export default connect(null, { fetchSSNData })(Index);
+export default machinesDetails;
