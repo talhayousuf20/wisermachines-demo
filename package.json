@@ -9,7 +9,6 @@
   },
   "author": "",
   "license": "",
-  
   "homepage": "/",
   "scripts": {
     "start": "react-scripts start",
@@ -34,6 +33,7 @@
     "@fortawesome/fontawesome-free": "5.12.1",
     "@types/highcharts": "^7.0.0",
     "apexcharts": "^3.22.0",
+    "axios": "^0.21.0",
     "chart.js": "2.9.3",
     "classnames": "2.2.6",
     "highcharts-more": "^0.1.7",
@@ -67,5 +67,6 @@
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",
     "typescript": "3.7.5"
-  }
+  },
+  "proxy": "http://192.168.0.160:3000"
 }

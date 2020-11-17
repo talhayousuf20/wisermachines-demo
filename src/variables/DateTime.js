@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Container } from "reactstrap";
+import { Row, Container } from "reactstrap";
 
 const DateTime = (props) => {
   return (
@@ -15,7 +15,7 @@ const DateTime = (props) => {
             }}
           >
             <span className={`text-green mr-3`}>
-              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <i className="fa fa-calendar" aria-hidden="true"></i>
             </span>
 
             <span style={{ fontSize: "150%" }}>{props.time}</span>
@@ -32,7 +32,7 @@ const DateTime = (props) => {
             }}
           >
             <span className={`text-green mr-3`}>
-              <i class="fa fa-clock" aria-hidden="true"></i>
+              <i className="fa fa-clock" aria-hidden="true"></i>
             </span>
 
             <span style={{ fontSize: "150%" }}>{props.date}</span>

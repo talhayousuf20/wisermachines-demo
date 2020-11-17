@@ -38,7 +38,7 @@ const TemperatureCard = (props) => {
                 props.value
               )} text-white rounded-circle shadow `}
             >
-              <i class="fa fa-thermometer-half fa-5x"></i>
+              <i className="fa fa-thermometer-half fa-5x"></i>
             </span>
             <span className="mr-4"></span>
             <span className={`text-${iconColor(props.value)}`}>

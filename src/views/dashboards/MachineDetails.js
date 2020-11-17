@@ -1,10 +1,7 @@
 import React from "react";
-import { Router, Route, browserHistory, IndexRoute } from "react-router";
-
 import classnames from "classnames";
 
 import { CurrentChart, StateChart } from "../../variables/DynamicChart";
-// import { StateChart } from "../variables/StateChart";
 import { Meter } from "../../variables/Meter";
 import TemperatureCard from "../../variables/TemperatureCard";
 import HumidityCard from "../../variables/HumidityCard";
@@ -18,7 +15,6 @@ import { parsePacketsFromSSN } from "../../utils/parse";
 import { isEmpty } from "../../utils/parse";
 
 import {
-  Button,
   Card,
   CardHeader,
   CardBody,
@@ -26,8 +22,6 @@ import {
   NavItem,
   NavLink,
   Nav,
-  Progress,
-  Table,
   Container,
   Row,
   Col,
@@ -35,13 +29,9 @@ import {
 
 import Header from "components/Headers/Header.js";
 
-import { connect } from "react-redux";
-import { fetchSSNData } from "../../actions/ssnDataActions";
-import PropTypes from "prop-types";
+// import io from "socket.io-client";
 
-import io from "socket.io-client";
-
-const SERVER_URL = "http://192.168.0.130:5000";
+// const SERVER_URL = "http://192.168.0.130:5000";
 
 // const client = io(SERVER_URL, {
 //   transports: ["websocket", "polling"],

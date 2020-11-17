@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
+import { Container, Row, Col } from "reactstrap";
 
 const iconColor = (value) => {
   if (value <= 30) {
@@ -37,7 +37,7 @@ const HumidityCard = (props) => {
                 props.value
               )} text-white rounded-circle shadow `}
             >
-              <i class="fa fa-tint"></i>
+              <i className="fa fa-tint"></i>
             </span>
             <span className="mr-4"></span>
             <span className={`text-${iconColor(props.value)}`}>

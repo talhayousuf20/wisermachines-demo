@@ -1,8 +1,6 @@
 import React from "react";
 import { Row, Col, Container } from "reactstrap";
 
-import { cardStyle } from "../common/inlineStyles";
-
 const iconColor = (value) => {
   if (value <= 25) {
     return "blue";
@@ -49,7 +47,7 @@ const UptimeDowntime = (props) => {
                 props.value
               )} text-white rounded-circle shadow `}
             >
-              <i class={`${upOrDown(props.title)}`}></i>
+              <i className={`${upOrDown(props.title)}`}></i>
             </span>
             <span className="mr-4"></span>
             <span className={`text-${iconColor(props.value)}`}>

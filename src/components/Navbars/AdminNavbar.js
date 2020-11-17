@@ -40,13 +40,16 @@ import { navbarStyle } from "../../common/inlineStyles";
 
 class AdminNavbar extends React.Component {
   render() {
-    const machinesNamesList = ["X-Ray", "MRI"];
-
-    const machinesNamesListMenu = machinesNamesList.map((machinesName) => {
+    const { machineNames } = this.props;
+    const machineNamesMenu = machineNames.map((machine) => {
       return (
-        <DropdownItem to={`/admin/dashboard/${machinesName}`} tag={Link}>
+        <DropdownItem
+          to={`/admin/dashboard/${machine}`}
+          tag={Link}
+          key={machineNames.indexOf(machine)}
+        >
           <i className="ni ni-settings-gear-65" />
-          <span>{machinesName.toUpperCase()}</span>
+          <span>{machine.toUpperCase()}</span>
         </DropdownItem>
       );
     });
@@ -114,7 +117,7 @@ class AdminNavbar extends React.Component {
                         src={require("assets/img/theme/team-4-800x800.jpg")}
                       />
                     </span> */}
-                    <i class="fas fa-th"></i>
+                    <i className="fas fa-th"></i>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
                         Machines
@@ -130,7 +133,7 @@ class AdminNavbar extends React.Component {
                     <i className="ni ni-single-02" />
                     <span>My profile</span>
                   </DropdownItem> */}
-                  {machinesNamesListMenu}
+                  {machineNamesMenu}
                   <DropdownItem divider />
                   <DropdownItem
                     href="#pablo"

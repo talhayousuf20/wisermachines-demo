@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import classnames from "classnames";
-
 import { Nav, NavLink, NavItem, Container } from "reactstrap";
-import Chart from "react-apexcharts";
-
-import { cardStyle } from "../../../common/inlineStyles";
 
 export default class MachineSummaryCard extends Component {
   constructor(props) {
@@ -13,6 +9,7 @@ export default class MachineSummaryCard extends Component {
     this.state = {};
   }
   render() {
+    console.log(this.props.machineID)
     return (
       <div>
         <Container>
@@ -22,7 +19,7 @@ export default class MachineSummaryCard extends Component {
                 className={classnames("py-2 px-3", {
                   active: true,
                 })}
-                href={`/admin/dashboard/${this.props.machineName}`}
+                href={`/admin/dashboard/${""}`}
               >
                 <span className="d-none d-md-block">
                   {this.props.machineName}

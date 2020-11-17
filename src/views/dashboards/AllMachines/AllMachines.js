@@ -1,43 +1,27 @@
 import React from "react";
-import classnames from "classnames";
-import { Link } from "react-router-dom";
 
-import Header from "../../../components/Headers/Header";
 import MachineSummaryCard from "./MachineSummaryCard";
 
 import { flexContainerStyle } from "../../../common/inlineStyles";
+import { keys_dev } from "../../../config/keys_dev";
+import axios from "axios";
 
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  NavItem,
-  NavLink,
-  Nav,
-  Progress,
-  Table,
-  Container,
-  Row,
-  Col,
-} from "reactstrap";
-
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
+import { Container } from "reactstrap";
 
 class AllMachines extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
   }
 
   render() {
-    const machinesNamesList = ["X-Ray", "MRI"];
+    const { machineNames } = this.props.machines;
+    const { machineIDs } = this.props.machines;
 
-    const machinesTiles = machinesNamesList.map((machinesName) => {
+    const machinesTiles = machineNames.map((machine) => {
       return (
         <MachineSummaryCard
-          machineName={machinesName.toUpperCase()}
+          machineName={machine}
+          machineID={machineIDs[machineNames.indexOf(machine)]}
         ></MachineSummaryCard>
       );
     });
@@ -47,7 +31,7 @@ class AllMachines extends React.Component {
         {/* Page content */}
         <Container className="mt--3" fluid>
           <h2 className="text-center m-5 text-muted">Your Machines</h2>
-          <div class="flex-container" style={flexContainerStyle}>
+          <div className="flex-container" style={flexContainerStyle}>
             {machinesTiles}
           </div>
         </Container>
@@ -56,4 +40,4 @@ class AllMachines extends React.Component {
   }
 }
 
-export default connect(null, {})(AllMachines);
+export default AllMachines;

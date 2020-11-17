@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { useEffect, useState } from "react";
 
-import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
+import { Container, Row, Col } from "reactstrap";
 import Chart from "react-apexcharts";
-
-import { cardStyle } from "../common/inlineStyles";
 
 const colors = (props) => {
   if (props.colors) {
