@@ -56,7 +56,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.1"
+    "socket.io-client": "^3.0.2"
   },
   "devDependencies": {
     "eslint": "^6.6.0",
@@ -68,5 +68,5 @@
     "gulp-append-prepend": "1.0.8",
     "typescript": "3.7.5"
   },
-  "proxy": "http://192.168.0.160:3000"
+  "proxy": "http://192.168.0.160:3000/"
 }

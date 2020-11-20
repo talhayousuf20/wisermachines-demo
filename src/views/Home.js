@@ -32,7 +32,7 @@ class Home extends React.Component {
     return (
       <div>
         <Container className="mt-7">
-          <AllMachines machines={this.state} />
+          <AllMachines allMachines={this.state} />
         </Container>
       </div>
     );

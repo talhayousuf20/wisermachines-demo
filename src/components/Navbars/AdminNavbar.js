@@ -39,17 +39,28 @@ import {
 import { navbarStyle } from "../../common/inlineStyles";
 
 class AdminNavbar extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick() {
+    localStorage.setItem("unlocked", false);
+  }
+
   render() {
-    const { machineNames } = this.props;
-    const machineNamesMenu = machineNames.map((machine) => {
+    const { machineNames } = this.props.allMachines;
+    const { machineIDs } = this.props.allMachines;
+    const machinesMenu = machineNames.map((machine) => {
       return (
         <DropdownItem
-          to={`/admin/dashboard/${machine}`}
+          to={`/admin/dashboard/${machineIDs[machineNames.indexOf(machine)]}`}
           tag={Link}
-          key={machineNames.indexOf(machine)}
+          key={machineIDs[machineNames.indexOf(machine)]}
         >
           <i className="ni ni-settings-gear-65" />
-          <span>{machine.toUpperCase()}</span>
+          <span>{machine}</span>
         </DropdownItem>
       );
     });
@@ -66,11 +77,13 @@ class AdminNavbar extends React.Component {
             <NavbarBrand className="pt-2">
               <Media className="align-items-center">
                 <div>
-                  <img
-                    className="navbar-brand-img"
-                    src={require("../../assets/img/brand/logo.png")}
-                    width="100px"
-                  />
+                  <Link to="/">
+                    <img
+                      className="navbar-brand-img"
+                      src={require("../../assets/img/brand/logo.png")}
+                      width="100px"
+                    />
+                  </Link>
                   <div
                     style={{
                       fontWeight: "bold",
@@ -133,14 +146,11 @@ class AdminNavbar extends React.Component {
                     <i className="ni ni-single-02" />
                     <span>My profile</span>
                   </DropdownItem> */}
-                  {machineNamesMenu}
+                  {machinesMenu}
                   <DropdownItem divider />
-                  <DropdownItem
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <i className="ni ni-user-run" />
-                    <span>Logout</span>
+                  <DropdownItem href="/" onClick={this.onClick}>
+                    <i class="fas fa-lock"></i>
+                    <span>Lock</span>
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>

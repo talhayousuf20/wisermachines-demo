@@ -1,110 +1,88 @@
-export const parsePacketsFromSSN = (packets) => {
-  let temperature = packets.map((packet) => {
-    return packet.data.temperature;
+export const parseDataFromSSN = (packets) => {
+  const interval = 1000;
+
+  const timeStamps = packets.map((packet) => {
+    return Date.parse(packet.timestamp.slice(0, -1));
   });
 
-  let humidity = packets.map((packet) => {
-    return packet.data.humidity;
+  const timeStampStart = timeStamps[0];
+  const timeStampEnd = timeStamps.slice(-1)[0];
+
+  // console.log(timeStampStart, timeStampEnd);
+
+  const loadCurrent = packets.map((packet) => {
+    return packet.load_current;
   });
 
-  // console.log(temperature, humidity);
-
-  let machine1Current = packets.map((packet) => {
-    return packet.data.machines[0].machine_load_current;
+  const machineStateStr = packets.map((packet) => {
+    return packet.status;
   });
-  // console.log(machine1Current);
 
-  let timeStamps = packets.map((packet) => {
-    return packet.timeStamp;
+  const machineState = machineStateStr.map((state) => {
+    if (state === "OFF") {
+      return 0;
+    } else if (state === "IDLE") {
+      return 1;
+    } else if (state === "ON") {
+      return 2;
+    } else return 0;
   });
-  // console.log(timeStamps);
 
-  let nodeID = packets.map((packet) => {
-    return packet.MAC;
-  });
-  // console.log(nodeID);
+  // const upCount = 0;
+  // const downCount = 0;
+  // const utilization;
+  // const lastHour = 3600; // 60 min x 60 sec
+  // const utilizationSince;
+  // const uptime, downtime;
 
-  let machine1State = packets.map((packet) => {
-    return packet.data.machines[0].machine_status;
-  });
-  // console.log(machine1State);
+  // const statesInGivenInterval = machine1State.slice(-lastHour);
+  // for (const i = 0; i < statesInGivenInterval.length; i++) {
+  //   if (statesInGivenInterval[i] === 2) {
+  //     upCount++;
+  //   } else downCount++;
+  // }
 
-  // machine1State = ['OFF', 'IDLE', 'ON', 'OFF', 'IDLE', 'ON', 'OFF', 'IDLE', 'ON'];
+  // // console.log(statesInGivenInterval);
 
-  for (let i = 0; i < machine1State.length; i++) {
-    if (machine1State[i] === "OFF") {
-      machine1State[i] = 0;
-    }
-    if (machine1State[i] === "IDLE") {
-      machine1State[i] = 1;
-    }
-    if (machine1State[i] === "ON") {
-      machine1State[i] = 2;
-    }
-  }
-  // console.log(machine1State);
+  // utilization = (upCount / statesInGivenInterval.length) * 100;
+  // utilizationSince = "For Last Hour";
 
-  let upCount = 0;
-  let downCount = 0;
-  let utilization;
-  let lastHour = 3600; // 60 min x 60 sec
-  let utilizationSince;
-  let uptime, downtime;
+  // uptime = upCount / 60;
+  // downtime = downCount / 60;
 
-  let statesInGivenInterval = machine1State.slice(-lastHour);
-  for (let i = 0; i < statesInGivenInterval.length; i++) {
-    if (statesInGivenInterval[i] === 2) {
-      upCount++;
-    } else downCount++;
-  }
+  // // console.log(utilization);
 
-  // console.log(statesInGivenInterval);
+  // const dateTime = new Date(timeStampEnd);
+  // const date = dateTime.toLocaleDateString(undefined, {
+  //   weekday: "short",
+  //   year: "numeric",
+  //   month: "short",
+  //   day: "numeric",
+  // });
+  // const time = dateTime.toLocaleTimeString("en-US");
 
-  utilization = (upCount / statesInGivenInterval.length) * 100;
-  utilizationSince = "For Last Hour";
+  // const newData;
+  // const currentDateTime = new Date();
 
-  uptime = upCount / 60;
-  downtime = downCount / 60;
+  // if (dateTime.getHours() === currentDateTime.getHours()) {
+  //   newData = true;
+  // } else newData = false;
 
-  // console.log(utilization);
+  // const temperature = packets.map((packet) => {
+  //   return packet.temperature;
+  // });
 
-  let timeStampStart = String(timeStamps.slice(1)[0].slice(0, -1));
-  let timeStampEnd = String(timeStamps.slice(-1)[0].slice(0, -1));
-
-  let dateTime = new Date(timeStampEnd);
-  let date = dateTime.toLocaleDateString(undefined, {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-  let time = dateTime.toLocaleTimeString("en-US");
-
-  let newData;
-  let currentDateTime = new Date();
-
-  if (dateTime.getHours() === currentDateTime.getHours()) {
-    newData = true;
-  } else newData = false;
+  // const humidity = packets.map((packet) => {
+  //   return packet.humidity;
+  // });
 
   return {
-    machine1Current,
-    timeStamp: {
-      start: timeStampStart,
-      end: timeStampEnd,
-    },
-    machine1State,
-    utilization: {
-      value: utilization.toFixed(0),
-      since: utilizationSince,
-    },
-    uptime: uptime.toFixed(0),
-    downtime: downtime.toFixed(0),
-    temperature: temperature.slice(-1)[0].toFixed(1),
-    humidity: humidity.slice(-1)[0].toFixed(0),
-    date: date,
-    time: time,
-    newData: newData,
+    timeStampStart,
+    timeStampEnd,
+    loadCurrent,
+    machineState,
+    interval,
+    timeStamps,
   };
 };
 
@@ -121,4 +99,19 @@ export const isEmpty = (value) => {
 export const arrayAverage = (arr) => {
   const average = arr.reduce((sume, el) => sume + el, 0) / arr.length;
   return average;
+};
+
+const uptoNow = (dateStr) => {
+  const target = new Date(dateStr);
+  const now = new Date();
+  const difference = now.getTime() - target.getTime();
+
+  return difference;
+};
+
+const getZeros = (interval, timeDiff) => {
+  if (timeDiff > interval) {
+    const noOfValuesToAppend = Math.floor(timeDiff / interval);
+    return new Array(noOfValuesToAppend).fill(0);
+  }
 };

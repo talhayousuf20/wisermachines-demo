@@ -1,7 +1,7 @@
 import React from "react";
 import classnames from "classnames";
 
-import { CurrentChart, StateChart } from "../../variables/DynamicChart";
+import { CurrentChart, StateChart } from "../../variables/LiveCharts";
 import { Meter } from "../../variables/Meter";
 import TemperatureCard from "../../variables/TemperatureCard";
 import HumidityCard from "../../variables/HumidityCard";
@@ -11,7 +11,7 @@ import DateTime from "../../variables/DateTime";
 
 import { cardStyle } from "../../common/inlineStyles";
 
-import { parsePacketsFromSSN } from "../../utils/parse";
+import { parseDataFromSSN } from "../../utils/parse";
 import { isEmpty } from "../../utils/parse";
 
 import {
@@ -29,55 +29,88 @@ import {
 
 import Header from "components/Headers/Header.js";
 
-// import io from "socket.io-client";
+import axios from "axios";
+import { keys_dev } from "../../config/keys_dev";
 
-// const SERVER_URL = "http://192.168.0.130:5000";
+import io from "socket.io-client";
 
-// const client = io(SERVER_URL, {
-//   transports: ["websocket", "polling"],
-// });
-// client.emit("Start", "Start sending the data");
+const client = io(keys_dev.SERVER, {
+  transports: ["websocket"],
+});
 
 class machinesDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataFromSSN: {
-        machine1Current: [],
-        timeStamp: {
-          start: null,
-          end: null,
-        },
-        machine1State: [],
-        utilization: {
-          value: 0,
-          since: "",
-        },
-        temperature: 25,
-        humidity: 30,
-        uptime: 0,
-        downtime: 0,
-        time: "",
-        date: "",
-      },
       activeNav: 1,
+      loadCurrent: [],
+      timeStampStart: null,
+      timeStampEnd: null,
+      machineState: [],
+      utilizationValue: 0,
+      utilizationTime: null,
+      OEEValue: 0,
+      OEETime: null,
+      temperature: 25,
+      humidity: 30,
+      uptime: 0,
+      downtime: 0,
+      interval: 5000,
+      timeStamps: [],
     };
   }
 
   componentDidMount() {
-    // client.on("message", (packets) => {
-    //   console.log("Latest Packet:", packets.slice(-1));
-    //   console.log("No. of Packets:", packets.length);
-    //   if (!isEmpty(packets)) {
-    //     const parsedPackets = parsePacketsFromSSN(packets);
-    //     if (parsedPackets.newData) {
-    //       console.log("New Data:", parsedPackets.newData);
-    //       this.setState({
-    //         dataFromSSN: parsedPackets,
-    //       });
-    //     }
-    //   } else console.log("No data from SSN");
-    // });
+    const machineID = this.props.match.params.machine;
+
+    axios
+      .get(`${keys_dev.SERVER}/data/${machineID}`)
+      .then((res) => {
+        const last24HoursData = res.data;
+        if (!isEmpty(last24HoursData)) {
+          const parsed = parseDataFromSSN(last24HoursData);
+          this.setState({
+            loadCurrent: parsed.loadCurrent,
+            timeStampStart: parsed.timeStampStart,
+            timeStampEnd: parsed.timeStampEnd,
+            machineState: parsed.machineState,
+            interval: parsed.interval,
+            timeStamps: parsed.timeStamps,
+          });
+        }
+      })
+      .catch((err) => console.log(err));
+
+    client.emit("send-data-demo-machine", { _id: machineID });
+    client.on(`data-demo-machine-${machineID}`, (msg) => {
+      try {
+        if (msg) {
+          console.log(msg);
+          const sensor = 0;
+
+          const LoadCurrentLive =
+            msg.data.machines[sensor].machine_load_current;
+
+          const machineStateLiveStr = msg.data.machines[sensor].machine_status;
+
+          const machineStateLive =
+            machineStateLiveStr === "OFF"
+              ? 0
+              : machineStateLiveStr === "IDLE"
+              ? 1
+              : machineStateLiveStr === "ON"
+              ? 2
+              : 0;
+
+          this.setState({
+            loadCurrent: [...this.state.loadCurrent, LoadCurrentLive],
+            machineState: [...this.state.machineState, machineStateLive],
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    });
   }
 
   toggleNavs = (e, index) => {
@@ -88,23 +121,23 @@ class machinesDetails extends React.Component {
   };
 
   render() {
-    console.log(this.props.match.params.machine);
+    // console.log(uptoNow(this.state.timeStampEnd));
 
-    const dynamicChartContainer =
+    const liveChartContainer =
       this.state.activeNav === 1 ? (
         <CardBody>
-          <CurrentChart chartData={this.state.dataFromSSN} />
+          <CurrentChart chartData={this.state} />
         </CardBody>
       ) : (
         <CardBody>
-          <StateChart chartData={this.state.dataFromSSN} />
+          <StateChart chartData={this.state} />
         </CardBody>
       );
 
     const utilizationMeter = (
       <Meter
-        value={this.state.dataFromSSN.utilization.value}
-        since={this.state.dataFromSSN.utilization.since}
+        value={this.state.utilizationValue}
+        since={this.state.utilizationSince}
         title={"Utilization"}
         colors={["#ABE5A1"]}
       />
@@ -112,47 +145,44 @@ class machinesDetails extends React.Component {
 
     const OEEMeter = (
       <Meter
-        value={this.state.dataFromSSN.utilization.value}
-        since={this.state.dataFromSSN.utilization.since}
+        value={this.state.OEEValue}
+        since={this.state.OEETime}
         title={"OEE"}
         colors={["#DBA1E5"]}
       />
     );
 
-    const operatorInfo = (
-      <InfoCard
-        title={"Operator Details"}
-        fields={["Operator", "Shift", "Group"]}
-        values={["Name", "Morning", "Group A"]}
-        icon={"fas fa-user"}
-        color={"orange"}
-      />
-    );
+    // const operatorInfo = (
+    //   <InfoCard
+    //     title={"Operator Details"}
+    //     fields={["Operator", "Shift", "Group"]}
+    //     values={["Name", "Morning", "Group A"]}
+    //     icon={"fas fa-user"}
+    //     color={"orange"}
+    //   />
+    // );
 
-    const machineInfo = (
-      <InfoCard
-        title={"Machine Details"}
-        fields={["Type", "Sub-type", "Department"]}
-        values={["Type", "Sub-type", "Department"]}
-        icon={"fas fa-cogs"}
-        color={"blue"}
-      />
-    );
+    // const machineInfo = (
+    //   <InfoCard
+    //     title={"Machine Details"}
+    //     fields={["Type", "Sub-type", "Department"]}
+    //     values={["Type", "Sub-type", "Department"]}
+    //     icon={"fas fa-cogs"}
+    //     color={"blue"}
+    //   />
+    // );
 
     const temperatureCard = (
-      <TemperatureCard
-        value={this.state.dataFromSSN.temperature}
-        unit={"\u00B0Celcius"}
-      />
+      <TemperatureCard value={this.state.temperature} unit={"\u00B0Celcius"} />
     );
 
     const humidityCard = (
-      <HumidityCard value={this.state.dataFromSSN.humidity} unit={"%RH"} />
+      <HumidityCard value={this.state.humidity} unit={"%RH"} />
     );
 
     const uptimeCard = (
       <UptimeDowntime
-        value={this.state.dataFromSSN.uptime}
+        value={this.state.uptime}
         title={"Uptime"}
         unit={"minutes in last hour"}
       />
@@ -160,18 +190,18 @@ class machinesDetails extends React.Component {
 
     const downtimeCard = (
       <UptimeDowntime
-        value={this.state.dataFromSSN.downtime}
+        value={this.state.downtime}
         title={"Downtime"}
         unit={"minutes in last hour"}
       />
     );
 
-    const dateTimeCard = (
-      <DateTime
-        time={this.state.dataFromSSN.time}
-        date={this.state.dataFromSSN.date}
-      />
-    );
+    // const dateTimeCard = (
+    //   <DateTime
+    //     time={this.state.dataFromSSN.time}
+    //     date={this.state.dataFromSSN.date}
+    //   />
+    // );
 
     return (
       <>
@@ -225,14 +255,6 @@ class machinesDetails extends React.Component {
                 <CardHeader className="bg-transparent">
                   <Row className="align-items-center">
                     <div className="col">
-                      {/* <h6 className='text-uppercase text-light ls-1 mb-1'>
-												Overview
-											</h6> */}
-                      {/* <h2 className='text-white mb-0'>
-												Sales value
-											</h2> */}
-                    </div>
-                    <div className="col">
                       <Nav className="justify-content-end" pills>
                         <NavItem>
                           <NavLink
@@ -267,7 +289,7 @@ class machinesDetails extends React.Component {
                     </div>
                   </Row>
                 </CardHeader>
-                {dynamicChartContainer}
+                {liveChartContainer}
               </Card>
             </Col>
             {/*<Col xl='4'>

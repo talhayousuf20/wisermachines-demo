@@ -14,8 +14,8 @@ class AllMachines extends React.Component {
   }
 
   render() {
-    const { machineNames } = this.props.machines;
-    const { machineIDs } = this.props.machines;
+    const { machineNames } = this.props.allMachines;
+    const { machineIDs } = this.props.allMachines;
 
     const machinesTiles = machineNames.map((machine) => {
       return (

@@ -9,7 +9,7 @@ export default class MachineSummaryCard extends Component {
     this.state = {};
   }
   render() {
-    console.log(this.props.machineID)
+    const { machineName, machineID } = this.props;
     return (
       <div>
         <Container>
@@ -19,11 +19,9 @@ export default class MachineSummaryCard extends Component {
                 className={classnames("py-2 px-3", {
                   active: true,
                 })}
-                href={`/admin/dashboard/${""}`}
+                href={`/admin/dashboard/${machineID}`}
               >
-                <span className="d-none d-md-block">
-                  {this.props.machineName}
-                </span>
+                <span className="d-none d-md-block">{machineName}</span>
               </NavLink>
             </NavItem>
           </Nav>
