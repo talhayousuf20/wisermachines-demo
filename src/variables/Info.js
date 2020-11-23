@@ -1,9 +1,7 @@
 import React from "react";
 import { Row, Col, Container } from "reactstrap";
 
-import { cardStyle } from "../common/inlineStyles";
-
-const InfoCard = (props) => {
+const Info = (props) => {
   return (
     <div>
       <Container>
@@ -25,16 +23,10 @@ const InfoCard = (props) => {
             <strong>{props.fields[1]}</strong>
             <p>{props.values[1]}</p>
           </Col>
-          <Col>
-            <div>
-              <strong>{props.fields[2]}</strong>
-              <p>{props.values[2]}</p>
-            </div>
-          </Col>
         </Row>
       </Container>
     </div>
   );
 };
 
-export default InfoCard;
+export default Info;

@@ -5,9 +5,18 @@ import { CurrentChart, StateChart } from "../../variables/LiveCharts";
 import { Meter } from "../../variables/Meter";
 import TemperatureCard from "../../variables/TemperatureCard";
 import HumidityCard from "../../variables/HumidityCard";
-import InfoCard from "../../variables/InfoCard";
+import Info from "../../variables/Info";
 import UptimeDowntime from "../../variables/UptimeDowntime";
 import DateTime from "../../variables/DateTime";
+
+import { connect } from "react-redux";
+import {
+  getAllMachines,
+  getLast24HDataByMachineID,
+  //   requestLiveData,
+  //   getLiveData,
+} from "../../actions/machinesActions";
+import PropTypes from "prop-types";
 
 import { cardStyle } from "../../common/inlineStyles";
 
@@ -29,15 +38,6 @@ import {
 
 import Header from "components/Headers/Header.js";
 
-import axios from "axios";
-import { keys_dev } from "../../config/keys_dev";
-
-import io from "socket.io-client";
-
-const client = io(keys_dev.SERVER, {
-  transports: ["websocket"],
-});
-
 class machinesDetails extends React.Component {
   constructor(props) {
     super(props);
@@ -57,60 +57,88 @@ class machinesDetails extends React.Component {
       downtime: 0,
       interval: 5000,
       timeStamps: [],
+      time: "",
+      date: "",
+      currentMachineID: "",
+      last24HData: [],
+      allMachines: [],
     };
   }
 
-  componentDidMount() {
-    const machineID = this.props.match.params.machine;
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { last24HData } = nextProps;
+    if (nextProps.last24HData !== prevState.last24HData) {
+      if (!isEmpty(last24HData)) {
+        const parsed = parseDataFromSSN(last24HData);
+        return {
+          last24HData: last24HData,
+          loadCurrent: parsed.loadCurrent,
+          timeStampStart: parsed.timeStampStart,
+          timeStampEnd: parsed.timeStampEnd,
+          machineState: parsed.machineState,
+          interval: parsed.interval,
+          timeStamps: parsed.timeStamps,
+          temperature: parsed.temperatureNow,
+          humidity: parsed.humidityNow,
+          utilizationValue: parsed.utilization,
+          uptime: parsed.uptime,
+          downtime: parsed.downtime,
+          date: parsed.date,
+          time: parsed.time,
+        };
+      } else return null;
+    } else
+      return {
+        allMachines: nextProps.allMachines,
+      };
+  }
 
-    axios
-      .get(`${keys_dev.SERVER}/data/${machineID}`)
-      .then((res) => {
-        const last24HoursData = res.data;
-        if (!isEmpty(last24HoursData)) {
-          const parsed = parseDataFromSSN(last24HoursData);
-          this.setState({
-            loadCurrent: parsed.loadCurrent,
-            timeStampStart: parsed.timeStampStart,
-            timeStampEnd: parsed.timeStampEnd,
-            machineState: parsed.machineState,
-            interval: parsed.interval,
-            timeStamps: parsed.timeStamps,
-          });
-        }
-      })
-      .catch((err) => console.log(err));
-
-    client.emit("send-data-demo-machine", { _id: machineID });
-    client.on(`data-demo-machine-${machineID}`, (msg) => {
-      try {
-        if (msg) {
-          console.log(msg);
-          const sensor = 0;
-
-          const LoadCurrentLive =
-            msg.data.machines[sensor].machine_load_current;
-
-          const machineStateLiveStr = msg.data.machines[sensor].machine_status;
-
-          const machineStateLive =
-            machineStateLiveStr === "OFF"
-              ? 0
-              : machineStateLiveStr === "IDLE"
-              ? 1
-              : machineStateLiveStr === "ON"
-              ? 2
-              : 0;
-
-          this.setState({
-            loadCurrent: [...this.state.loadCurrent, LoadCurrentLive],
-            machineState: [...this.state.machineState, machineStateLive],
-          });
-        }
-      } catch (error) {
-        console.log(error);
-      }
+  async componentDidMount() {
+    this.setState({
+      currentMachineID: this.props.match.params.machine,
     });
+
+    this.props.getAllMachines();
+    this.props.getLast24HDataByMachineID(this.props.match.params.machine);
+    setInterval(() => {
+      this.props.getLast24HDataByMachineID(this.state.currentMachineID);
+      this.setState({
+        loading: false,
+      });
+    }, 5000);
+
+    // requestLiveData(machineID);
+
+    // if (newData) {
+    //   const sensor = 0;
+    //   const LoadCurrentLive =
+    //     newData.data.machines[sensor].machine_load_current;
+    //   const machineStateLiveStr = newData.data.machines[sensor].machine_status;
+    //   const machineStateLive =
+    //     machineStateLiveStr === "OFF"
+    //       ? 0
+    //       : machineStateLiveStr === "IDLE"
+    //       ? 1
+    //       : machineStateLiveStr === "ON"
+    //       ? 2
+    //       : 0;
+    //   this.setState({
+    //     loadCurrent: [...this.state.loadCurrent, LoadCurrentLive],
+    //     machineState: [...this.state.machineState, machineStateLive],
+    //   });
+    // }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.machine !== prevProps.match.params.machine) {
+      //   this.props.getLast24HDataByMachineID(this.props.match.params.machine);
+      this.setState({
+        loading: true,
+        currentMachineID: this.props.match.params.machine,
+      });
+    }
+
+    // this.props.getLiveData(machineID);
   }
 
   toggleNavs = (e, index) => {
@@ -121,7 +149,28 @@ class machinesDetails extends React.Component {
   };
 
   render() {
-    // console.log(uptoNow(this.state.timeStampEnd));
+    const spinner = this.state.loading ? (
+      <div className="text-center text-muted">Loading...</div>
+    ) : null;
+
+    const { allMachines } = this.state;
+
+    const matchedMachine =
+      allMachines.length !== 0
+        ? allMachines.filter((machine) => {
+            if (machine._id) {
+              if (machine._id === this.state.currentMachineID) {
+                return machine._id;
+              }
+            }
+          })
+        : null;
+
+    const matchedName = matchedMachine
+      ? matchedMachine.length !== 0
+        ? matchedMachine[0].name
+        : "Loading"
+      : "Loading";
 
     const liveChartContainer =
       this.state.activeNav === 1 ? (
@@ -152,25 +201,15 @@ class machinesDetails extends React.Component {
       />
     );
 
-    // const operatorInfo = (
-    //   <InfoCard
-    //     title={"Operator Details"}
-    //     fields={["Operator", "Shift", "Group"]}
-    //     values={["Name", "Morning", "Group A"]}
-    //     icon={"fas fa-user"}
-    //     color={"orange"}
-    //   />
-    // );
-
-    // const machineInfo = (
-    //   <InfoCard
-    //     title={"Machine Details"}
-    //     fields={["Type", "Sub-type", "Department"]}
-    //     values={["Type", "Sub-type", "Department"]}
-    //     icon={"fas fa-cogs"}
-    //     color={"blue"}
-    //   />
-    // );
+    const machineInfo = (
+      <Info
+        title={"Machine"}
+        fields={["Name"]}
+        values={[`${matchedName}`]}
+        icon={"fas fa-cogs"}
+        color={"blue"}
+      />
+    );
 
     const temperatureCard = (
       <TemperatureCard value={this.state.temperature} unit={"\u00B0Celcius"} />
@@ -196,25 +235,19 @@ class machinesDetails extends React.Component {
       />
     );
 
-    // const dateTimeCard = (
-    //   <DateTime
-    //     time={this.state.dataFromSSN.time}
-    //     date={this.state.dataFromSSN.date}
-    //   />
-    // );
+    const dateTimeCard = (
+      <DateTime time={this.state.time} date={this.state.date} />
+    );
 
     return (
       <>
         <Header />
         {/* Page content */}
+        {spinner}
         <Container className="mt-1">
-          {/* <Row>
+          <Row>
             <Col className="mb-3">
               <CardDeck style={{ display: "flex" }}>
-                <Card className="card-stats" style={cardStyle}>
-                  <CardBody>{operatorInfo}</CardBody>
-                </Card>
-
                 <Card className="card-stats" style={cardStyle}>
                   <CardBody>{machineInfo}</CardBody>
                 </Card>
@@ -224,7 +257,7 @@ class machinesDetails extends React.Component {
                 </Card>
               </CardDeck>
             </Col>
-          </Row> */}
+          </Row>
           <Row>
             <Col className="mb-3">
               <CardDeck style={{ display: "flex" }}>
@@ -568,4 +601,22 @@ class machinesDetails extends React.Component {
   }
 }
 
-export default machinesDetails;
+machinesDetails.propTypes = {
+  getAllMachines: PropTypes.func.isRequired,
+  getLast24HDataByMachineID: PropTypes.func.isRequired,
+  //   getLiveData: PropTypes.func.isRequired,
+  allMachines: PropTypes.array.isRequired,
+  last24HData: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  allMachines: state.machines.allMachines,
+  last24HData: state.machines.last24HData,
+  //   newData: state.machines.newData,
+});
+
+export default connect(mapStateToProps, {
+  getAllMachines,
+  getLast24HDataByMachineID,
+  //   getLiveData,
+})(machinesDetails);

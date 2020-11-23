@@ -4,6 +4,9 @@ import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth.js";
 
+import { Provider } from "react-redux";
+import store from "./store";
+
 import axios from "axios";
 import { keys_dev } from "./config/keys_dev";
 
@@ -11,8 +14,8 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      machineNames: [],
-      machineIDs: [],
+      machineNames: ["Machines Not Found"],
+      machineIDs: ["machines-not-found"],
     };
   }
   componentDidMount() {
@@ -29,18 +32,20 @@ export default class App extends Component {
   }
   render() {
     return (
-      <BrowserRouter>
-        <Switch>
-          <Route
-            path="/admin"
-            render={(props) => (
-              <AdminLayout {...props} allMachines={this.state} />
-            )}
-          />
-          <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
-          <Redirect from="/" to="/admin/home" />
-        </Switch>
-      </BrowserRouter>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/admin"
+              render={(props) => (
+                <AdminLayout {...props} allMachines={this.state} />
+              )}
+            />
+            <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
+            <Redirect from="/" to="/admin/home" />
+          </Switch>
+        </BrowserRouter>
+      </Provider>
     );
   }
 }

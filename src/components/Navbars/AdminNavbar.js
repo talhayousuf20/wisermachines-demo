@@ -74,16 +74,14 @@ class AdminNavbar extends React.Component {
           // style={navbarStyle}
         >
           <Container fluid>
-            <NavbarBrand className="pt-2">
+            <NavbarBrand className="pt-2" href="/">
               <Media className="align-items-center">
                 <div>
-                  <Link to="/">
-                    <img
-                      className="navbar-brand-img"
-                      src={require("../../assets/img/brand/logo.png")}
-                      width="100px"
-                    />
-                  </Link>
+                  <img
+                    className="navbar-brand-img"
+                    src={require("../../assets/img/brand/logo.png")}
+                    width="100px"
+                  />
                   <div
                     style={{
                       fontWeight: "bold",
@@ -117,7 +115,7 @@ class AdminNavbar extends React.Component {
             </Form>
             <Media className="align-items-center">
               <span>
-                <i class="fas fa-bell"></i>
+                <i className="fas fa-bell"></i>
               </span>
             </Media> */}
             <Nav className="align-items-center d-none d-md-flex" navbar>
@@ -149,7 +147,7 @@ class AdminNavbar extends React.Component {
                   {machinesMenu}
                   <DropdownItem divider />
                   <DropdownItem href="/" onClick={this.onClick}>
-                    <i class="fas fa-lock"></i>
+                    <i className="fas fa-lock"></i>
                     <span>Lock</span>
                   </DropdownItem>
                 </DropdownMenu>

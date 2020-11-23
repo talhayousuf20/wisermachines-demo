@@ -1,5 +1,14 @@
 export const parseDataFromSSN = (packets) => {
-  const interval = 1000;
+  const temperature = packets.map((packet) => {
+    return packet.temperature;
+  });
+
+  const humidity = packets.map((packet) => {
+    return packet.humidity;
+  });
+
+  const temperatureNow = temperature.slice(-1)[0];
+  const humidityNow = humidity.slice(-1)[0];
 
   const timeStamps = packets.map((packet) => {
     return Date.parse(packet.timestamp.slice(0, -1));
@@ -7,8 +16,6 @@ export const parseDataFromSSN = (packets) => {
 
   const timeStampStart = timeStamps[0];
   const timeStampEnd = timeStamps.slice(-1)[0];
-
-  // console.log(timeStampStart, timeStampEnd);
 
   const loadCurrent = packets.map((packet) => {
     return packet.load_current;
@@ -28,61 +35,43 @@ export const parseDataFromSSN = (packets) => {
     } else return 0;
   });
 
-  // const upCount = 0;
-  // const downCount = 0;
-  // const utilization;
-  // const lastHour = 3600; // 60 min x 60 sec
-  // const utilizationSince;
-  // const uptime, downtime;
+  let upCount = 0;
+  let downCount = 0;
+  let lastHour = 3600 / 5; // 60 min x 60 sec / 5 sec
 
-  // const statesInGivenInterval = machine1State.slice(-lastHour);
-  // for (const i = 0; i < statesInGivenInterval.length; i++) {
-  //   if (statesInGivenInterval[i] === 2) {
-  //     upCount++;
-  //   } else downCount++;
-  // }
+  const statesInGivenInterval = machineState.slice(-lastHour);
+  for (let i = 0; i < statesInGivenInterval.length; i++) {
+    if (statesInGivenInterval[i] === 2) {
+      upCount++;
+    } else downCount++;
+  }
 
-  // // console.log(statesInGivenInterval);
+  const utilization = (upCount / statesInGivenInterval.length) * 100;
+  const uptime = upCount / 60;
+  const downtime = downCount / 60;
 
-  // utilization = (upCount / statesInGivenInterval.length) * 100;
-  // utilizationSince = "For Last Hour";
-
-  // uptime = upCount / 60;
-  // downtime = downCount / 60;
-
-  // // console.log(utilization);
-
-  // const dateTime = new Date(timeStampEnd);
-  // const date = dateTime.toLocaleDateString(undefined, {
-  //   weekday: "short",
-  //   year: "numeric",
-  //   month: "short",
-  //   day: "numeric",
-  // });
-  // const time = dateTime.toLocaleTimeString("en-US");
-
-  // const newData;
-  // const currentDateTime = new Date();
-
-  // if (dateTime.getHours() === currentDateTime.getHours()) {
-  //   newData = true;
-  // } else newData = false;
-
-  // const temperature = packets.map((packet) => {
-  //   return packet.temperature;
-  // });
-
-  // const humidity = packets.map((packet) => {
-  //   return packet.humidity;
-  // });
+  const dateTime = new Date(1606147452097);
+  const date = dateTime.toLocaleDateString(undefined, {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+  const time = dateTime.toLocaleTimeString("en-US");
 
   return {
     timeStampStart,
     timeStampEnd,
     loadCurrent,
     machineState,
-    interval,
     timeStamps,
+    temperatureNow,
+    humidityNow,
+    utilization,
+    uptime,
+    downtime,
+    date,
+    time,
   };
 };
 
