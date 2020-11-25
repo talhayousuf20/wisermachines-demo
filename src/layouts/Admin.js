@@ -150,6 +150,13 @@ class Admin extends React.Component {
                           type="password"
                           autoComplete="new-password"
                           onChange={this.onChange}
+                          onKeyPress={(ev) => {
+                            console.log(`Pressed keyCode ${ev.key}`);
+                            if (ev.key === "Enter") {
+                              ev.preventDefault();
+                              this.onSubmit();
+                            }
+                          }}
                         />
                       </InputGroup>
                     </FormGroup>

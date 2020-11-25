@@ -1,4 +1,4 @@
-import { GET_ALL_MACHINES, GET_LAST_24H_DATA, GET_LIVE_DATA } from "./types";
+import { GET_ALL_MACHINES, GET_LAST_24H_DATA, ERROR } from "./types";
 
 import { keys_dev } from "../config/keys_dev";
 import { isEmpty } from "../utils/parse";
@@ -29,14 +29,21 @@ import { isEmpty } from "../utils/parse";
 // };
 
 export const getAllMachines = () => (dispatch) => {
-  fetch(`${keys_dev.SERVER}/machines`).then((res) =>
-    res.json().then((data) => {
-      dispatch({
-        type: GET_ALL_MACHINES,
-        payload: data,
-      });
-    })
-  );
+  try {
+    fetch(`${keys_dev.SERVER}/machines`).then((res) =>
+      res.json().then((data) => {
+        dispatch({
+          type: GET_ALL_MACHINES,
+          payload: data,
+        });
+      })
+    );
+  } catch (err) {
+    dispatch({
+      type: ERROR,
+      payload: "Cannot connect to server",
+    });
+  }
 };
 
 export const getLast24HDataByMachineID = (machineID) => (dispatch) => {
@@ -52,6 +59,9 @@ export const getLast24HDataByMachineID = (machineID) => (dispatch) => {
       })
     );
   } catch (err) {
-    //  Block of code to handle errors
+    dispatch({
+      type: ERROR,
+      payload: "Cannot connect to server",
+    });
   }
 };

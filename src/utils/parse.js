@@ -1,4 +1,10 @@
 export const parseDataFromSSN = (packets) => {
+  const interval = 5;
+  let upCount = 0;
+  let downCount = 0;
+  let lastHour = 60 * (60 / interval); // 60 min x 60 sec / 5 sec
+  let operationCount = 0; // no of times state went from ON to OFF/IDLE
+
   const temperature = packets.map((packet) => {
     return packet.temperature;
   });
@@ -7,8 +13,8 @@ export const parseDataFromSSN = (packets) => {
     return packet.humidity;
   });
 
-  const temperatureNow = temperature.slice(-1)[0];
-  const humidityNow = humidity.slice(-1)[0];
+  const temperatureNow = Math.round(temperature.slice(-1)[0]);
+  const humidityNow = Math.round(humidity.slice(-1)[0]);
 
   const timeStamps = packets.map((packet) => {
     return Date.parse(packet.timestamp.slice(0, -1));
@@ -20,6 +26,12 @@ export const parseDataFromSSN = (packets) => {
   const loadCurrent = packets.map((packet) => {
     return packet.load_current;
   });
+
+  const currentInGivenInterval = loadCurrent.slice(-lastHour);
+  const instantPower = currentInGivenInterval.map((current) => {
+    return 1.732 * 0.95 * 400 * current;
+  });
+  const unitsConsumed = Math.round(arrayAverage(instantPower) / 1000);
 
   const machineStateStr = packets.map((packet) => {
     return packet.status;
@@ -35,22 +47,26 @@ export const parseDataFromSSN = (packets) => {
     } else return 0;
   });
 
-  let upCount = 0;
-  let downCount = 0;
-  let lastHour = 3600 / 5; // 60 min x 60 sec / 5 sec
-
   const statesInGivenInterval = machineState.slice(-lastHour);
   for (let i = 0; i < statesInGivenInterval.length; i++) {
     if (statesInGivenInterval[i] === 2) {
       upCount++;
     } else downCount++;
+
+    if (statesInGivenInterval[i] === 2) {
+      if (statesInGivenInterval[i + 1] !== 2) {
+        operationCount++;
+      } else operationCount = 1;
+    }
   }
 
-  const utilization = (upCount / statesInGivenInterval.length) * 100;
-  const uptime = upCount / 60;
-  const downtime = downCount / 60;
+  const utilization = Math.round(
+    (upCount / statesInGivenInterval.length) * 100
+  );
+  const uptime = Math.round(upCount / (60 / interval));
+  const downtime = Math.round(downCount / (60 / interval));
 
-  const dateTime = new Date(1606147452097);
+  const dateTime = new Date();
   const date = dateTime.toLocaleDateString(undefined, {
     weekday: "short",
     year: "numeric",
@@ -72,6 +88,8 @@ export const parseDataFromSSN = (packets) => {
     downtime,
     date,
     time,
+    unitsConsumed,
+    operationCount,
   };
 };
 
