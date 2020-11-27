@@ -184,10 +184,10 @@ class machinesDetails extends React.Component {
   };
 
   render() {
-    const { allMachines } = this.state;
+    const { allMachines, error } = this.state;
 
     const matchedMachine =
-      allMachines.length !== 0
+      typeof allMachines === "array" && allMachines.length !== 0
         ? allMachines.filter((machine) => {
             if (machine._id) {
               if (machine._id === this.state.currentMachineID) {
@@ -644,10 +644,16 @@ class machinesDetails extends React.Component {
       </div>
     ) : null;
 
+    const errorMsg = (
+      <div className="container text-center mt-5">
+        <h3>{error}</h3>
+      </div>
+    );
+
     return (
       <div>
         {loader}
-        {content}
+        {error ? errorMsg : content}
       </div>
     );
   }

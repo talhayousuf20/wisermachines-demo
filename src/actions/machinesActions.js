@@ -30,14 +30,21 @@ import { isEmpty } from "../utils/parse";
 
 export const getAllMachines = () => (dispatch) => {
   try {
-    fetch(`${keys_dev.SERVER}/machines`).then((res) =>
-      res.json().then((data) => {
+    fetch(`${keys_dev.SERVER}/machines`).then((res) => {
+      if (!res.ok) {
         dispatch({
-          type: GET_ALL_MACHINES,
-          payload: data,
+          type: ERROR,
+          payload: res.error,
         });
-      })
-    );
+      } else {
+        res.json().then((data) => {
+          dispatch({
+            type: GET_ALL_MACHINES,
+            payload: data,
+          });
+        });
+      }
+    });
   } catch (err) {
     dispatch({
       type: ERROR,
@@ -48,20 +55,24 @@ export const getAllMachines = () => (dispatch) => {
 
 export const getLast24HDataByMachineID = (machineID) => (dispatch) => {
   try {
-    fetch(`${keys_dev.SERVER}/data/${machineID}`).then((res) =>
-      res.json().then((data) => {
-        if (!isEmpty(data)) {
-          dispatch({
-            type: GET_LAST_24H_DATA,
-            payload: data,
-          });
-        }
-      })
-    );
-  } catch (err) {
-    dispatch({
-      type: ERROR,
-      payload: "Cannot connect to server",
+    fetch(`${keys_dev.SERVER}/data/${machineID}`).then((res) => {
+      if (!res.ok) {
+        dispatch({
+          type: ERROR,
+          payload: res.error,
+        });
+      } else {
+        res.json().then((data) => {
+          if (!isEmpty(data)) {
+            dispatch({
+              type: GET_LAST_24H_DATA,
+              payload: data,
+            });
+          }
+        });
+      }
     });
+  } catch (err) {
+    console.log(err);
   }
 };

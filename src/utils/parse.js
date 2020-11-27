@@ -1,4 +1,6 @@
-export const parseDataFromSSN = (packets) => {
+export const parseDataFromSSN = (msg) => {
+  const packets = typeof msg === "array" ? msg : [];
+
   const interval = 5;
   let upCount = 0;
   let downCount = 0;
@@ -53,10 +55,12 @@ export const parseDataFromSSN = (packets) => {
       upCount++;
     } else downCount++;
 
-    if (statesInGivenInterval[i] === 2) {
-      if (statesInGivenInterval[i + 1] !== 2) {
-        operationCount++;
-      } else operationCount = 1;
+    if (
+      statesInGivenInterval[i] === 2 &&
+      statesInGivenInterval[i + 1] &&
+      statesInGivenInterval[i + 1] !== 2
+    ) {
+      operationCount++;
     }
   }
 
