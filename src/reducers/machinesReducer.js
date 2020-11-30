@@ -1,8 +1,4 @@
-import {
-  GET_ALL_MACHINES,
-  GET_LAST_24H_DATA,
-  // GET_LIVE_DATA,
-} from "../actions/types";
+import { GET_ALL_MACHINES, GET_LAST_24H_DATA } from "../actions/types";
 
 const initialState = {
   allMachines: [],
@@ -23,12 +19,6 @@ export default function (state = initialState, action) {
         ...state,
         last24HData: action.payload,
       };
-
-    // case GET_LIVE_DATA:
-    //   return {
-    //     ...state,
-    //     newData: action.payload,
-    //   };
 
     default:
       return state;

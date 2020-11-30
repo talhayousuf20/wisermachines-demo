@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 
 import { Container, Row, Col } from "reactstrap";
@@ -33,8 +33,6 @@ const options = (props) => {
     },
     plotOptions: {
       radialBar: {
-        // startAngle: -135,
-        // endAngle: 225,
         hollow: {
           margin: 0,
           size: "70%",
@@ -52,14 +50,7 @@ const options = (props) => {
         track: {
           background: "#EFEFEF",
           strokeWidth: "100%",
-          margin: 0, // margin is in pixels
-          // dropShadow: {
-          //   enabled: true,
-          //   top: -3,
-          //   left: 0,
-          //   blur: 4,
-          //   opacity: 0.35,
-          // },
+          margin: 0,
         },
 
         dataLabels: {
@@ -81,7 +72,7 @@ const options = (props) => {
 };
 
 export const Meter = (props) => {
-  const [optionsState, setOptions] = useState(options(props));
+  const [optionsState] = useState(options(props));
   const [variables, setVariables] = useState({
     series: [0],
     since: null,

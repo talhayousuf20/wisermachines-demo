@@ -1,5 +1,5 @@
 export const parseDataFromSSN = (msg) => {
-  const packets = typeof msg === "array" ? msg : [];
+  const packets = !isEmpty(msg) ? msg : [];
 
   const interval = 5;
   let upCount = 0;
@@ -55,11 +55,7 @@ export const parseDataFromSSN = (msg) => {
       upCount++;
     } else downCount++;
 
-    if (
-      statesInGivenInterval[i] === 2 &&
-      statesInGivenInterval[i + 1] &&
-      statesInGivenInterval[i + 1] !== 2
-    ) {
+    if (statesInGivenInterval[i] === 2 && statesInGivenInterval[i + 1] !== 2) {
       operationCount++;
     }
   }
@@ -102,7 +98,7 @@ export const isEmpty = (value) => {
     value === undefined ||
     value === null ||
     (typeof value === "object" && Object.keys(value).length === 0) ||
-    (typeof value === "array" && value.length === 0) ||
+    (typeof value instanceof Array && value.length === 0) ||
     (typeof value === "string" && value.trim().length === 0)
   );
 };
@@ -110,19 +106,4 @@ export const isEmpty = (value) => {
 export const arrayAverage = (arr) => {
   const average = arr.reduce((sume, el) => sume + el, 0) / arr.length;
   return average;
-};
-
-const uptoNow = (dateStr) => {
-  const target = new Date(dateStr);
-  const now = new Date();
-  const difference = now.getTime() - target.getTime();
-
-  return difference;
-};
-
-const getZeros = (interval, timeDiff) => {
-  if (timeDiff > interval) {
-    const noOfValuesToAppend = Math.floor(timeDiff / interval);
-    return new Array(noOfValuesToAppend).fill(0);
-  }
 };
