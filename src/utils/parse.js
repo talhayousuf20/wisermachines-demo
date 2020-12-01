@@ -39,8 +39,9 @@ export const parseDataFromSSN = (msg, index) => {
     return 1.732 * 0.95 * 400 * current;
   });
 
+  const numOfHoursActual = (currentInGivenInterval.length * interval) / 3600;
   const unitsConsumed = Math.round(
-    (arrayAverage(instantPower) / 1000) * numOfHours
+    (arrayAverage(instantPower) / 1000) * numOfHoursActual
   );
 
   const machineStateStr = packets.map((packet) => {
