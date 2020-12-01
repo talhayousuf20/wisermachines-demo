@@ -45,6 +45,7 @@ class machinesDetails extends React.Component {
     super(props);
     this.state = {
       activeNav: 1,
+      timeFrameNav: 1,
       loadCurrent: [],
       timeStampStart: null,
       timeStampEnd: null,
@@ -53,8 +54,8 @@ class machinesDetails extends React.Component {
       utilizationTime: null,
       OEEValue: 0,
       OEETime: null,
-      temperature: 25,
-      humidity: 30,
+      temperature: 0,
+      humidity: 0,
       uptime: 0,
       downtime: 0,
       interval: 5000,
@@ -101,6 +102,7 @@ class machinesDetails extends React.Component {
           operationCount: parsed.operationCount,
           unitsConsumed: parsed.unitsConsumed,
           error: null,
+          allMachines: nextProps.allMachines,
         };
       } else return null;
     } else
@@ -137,8 +139,8 @@ class machinesDetails extends React.Component {
         utilizationTime: null,
         OEEValue: 0,
         OEETime: null,
-        temperature: 25,
-        humidity: 30,
+        temperature: 0,
+        humidity: 0,
         uptime: 0,
         downtime: 0,
         interval: 5000,
@@ -158,18 +160,25 @@ class machinesDetails extends React.Component {
     });
   };
 
+  toggleTimeFrameNavs = (e, index) => {
+    e.preventDefault();
+    this.setState({
+      timeFrameNav: index,
+    });
+  };
+
   render() {
     const { allMachines } = this.state;
 
     const matchedMachine =
-      allMachines && allMachines.length !== 0
+      allMachines instanceof Array && allMachines.length !== 0
         ? allMachines.filter((machine) => {
             if (machine._id) {
               if (machine._id === this.state.currentMachineID) {
                 return machine._id;
               }
             }
-            return "---";
+            return null;
           })
         : null;
 
@@ -260,6 +269,50 @@ class machinesDetails extends React.Component {
         <Header />
         {/* Page content */}
         <Container className="mt-1">
+          {/* <Row>
+            <div className="col mb-2">
+              <Nav className="justify-content-end" pills>
+                <NavItem>
+                  <NavLink
+                    className={classnames("py-2 px-3", {
+                      active: this.state.timeFrameNav === 1,
+                    })}
+                    href="#pablo"
+                    onClick={(e) => this.toggleTimeFrameNavs(e, 1)}
+                  >
+                    <span className="d-none d-md-block">Hour</span>
+                    <span className="d-md-none">H</span>
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    className={classnames("py-2 px-3", {
+                      active: this.state.timeFrameNav === 2,
+                    })}
+                    data-toggle="tab"
+                    href="#pablo"
+                    onClick={(e) => this.toggleTimeFrameNavs(e, 2)}
+                  >
+                    <span className="d-none d-md-block">Day</span>
+                    <span className="d-md-none">D</span>
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    className={classnames("py-2 px-3", {
+                      active: this.state.timeFrameNav === 3,
+                    })}
+                    data-toggle="tab"
+                    href="#pablo"
+                    onClick={(e) => this.toggleTimeFrameNavs(e, 3)}
+                  >
+                    <span className="d-none d-md-block">Week</span>
+                    <span className="d-md-none">Week</span>
+                  </NavLink>
+                </NavItem>
+              </Nav>
+            </div>
+          </Row>*/}
           <Row>
             <Col className="mb-3">
               <CardDeck style={{ display: "flex" }}>
