@@ -1,15 +1,7 @@
 import React from "react";
 import { Row, Col, Container } from "reactstrap";
 
-const iconColor = (value) => {
-  if (value <= 25) {
-    return "blue";
-  } else if (value <= 50) {
-    return "orange";
-  } else if (value > 50) {
-    return "red";
-  }
-};
+const iconColor = (value) => {};
 
 const upOrDown = (title) => {
   if (title.includes("up") || title.includes("Up")) {
@@ -42,15 +34,14 @@ const UptimeDowntime = (props) => {
               justifyContent: "center",
             }}
           >
-            <span
-              className={`icon icon-shape bg-${iconColor(
-                props.value
-              )} text-white rounded-circle shadow `}
-            >
-              <i className={`${upOrDown(props.title)}`}></i>
-            </span>
+            <i
+              className={`text-${iconColor(props.title)} ${upOrDown(
+                props.title
+              )} fa-2x`}
+            ></i>
+
             <span className="mr-4"></span>
-            <span className={`text-${iconColor(props.value)}`}>
+            <span className={`text-${iconColor(props.title)}`}>
               <span style={{ fontSize: "300%" }}>{props.value}</span>
             </span>
           </div>
@@ -64,7 +55,7 @@ const UptimeDowntime = (props) => {
                 justifyContent: "center",
               }}
             >
-              <span className={`text-${iconColor(props.value)}`}>
+              <span className={`text-${iconColor(props.title)}`}>
                 <span className="ml-1">{props.unit}</span>
               </span>
             </div>

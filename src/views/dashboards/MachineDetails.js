@@ -83,7 +83,7 @@ class machinesDetails extends React.Component {
 
     if (nextProps.last24HData !== prevState.last24HData) {
       if (!isEmpty(last24HData)) {
-        const parsed = parseDataFromSSN(last24HData);
+        const parsed = parseDataFromSSN(last24HData, prevState.timeFrameNav);
         return {
           last24HData: last24HData,
           loadCurrent: parsed.loadCurrent,
@@ -162,7 +162,25 @@ class machinesDetails extends React.Component {
 
   toggleTimeFrameNavs = (e, index) => {
     e.preventDefault();
+    const parsed = parseDataFromSSN(this.state.last24HData, index);
     this.setState({
+      last24HData: this.state.last24HData,
+      loadCurrent: parsed.loadCurrent,
+      timeStampStart: parsed.timeStampStart,
+      timeStampEnd: parsed.timeStampEnd,
+      machineState: parsed.machineState,
+      interval: parsed.interval,
+      timeStamps: parsed.timeStamps,
+      temperature: parsed.temperatureNow,
+      humidity: parsed.humidityNow,
+      utilizationValue: parsed.utilization,
+      uptime: parsed.uptime,
+      downtime: parsed.downtime,
+      date: parsed.date,
+      time: parsed.time,
+      operationCount: parsed.operationCount,
+      unitsConsumed: parsed.unitsConsumed,
+      error: null,
       timeFrameNav: index,
     });
   };
@@ -202,7 +220,6 @@ class machinesDetails extends React.Component {
     const utilizationMeter = (
       <Meter
         value={this.state.utilizationValue}
-        since={"in last hour"}
         title={"Utilization"}
         colors={["#ABE5A1"]}
       />
@@ -230,7 +247,7 @@ class machinesDetails extends React.Component {
       <UptimeDowntime
         value={this.state.uptime}
         title={"Uptime"}
-        unit={"minutes in last hour"}
+        unit={"HH:MM"}
       />
     );
 
@@ -238,7 +255,7 @@ class machinesDetails extends React.Component {
       <UptimeDowntime
         value={this.state.downtime}
         title={"Downtime"}
-        unit={"minutes in last hour"}
+        unit={"HH:MM"}
       />
     );
 
@@ -247,7 +264,7 @@ class machinesDetails extends React.Component {
         value={this.state.unitsConsumed}
         icon={"fas fa-bolt fa-2x"}
         title={"Units Consumed"}
-        unit={"in last hour"}
+        unit={"kilowatt hour"}
       />
     );
 
@@ -256,7 +273,7 @@ class machinesDetails extends React.Component {
         value={this.state.operationCount}
         icon={"fas fa-tasks fa-2x"}
         title={"Operation Count"}
-        unit={"in last hour"}
+        unit={""}
       />
     );
 
@@ -269,8 +286,8 @@ class machinesDetails extends React.Component {
         <Header />
         {/* Page content */}
         <Container className="mt-1">
-          {/* <Row>
-            <div className="col mb-2">
+          <Row>
+            <div className="col mb-3">
               <Nav className="justify-content-end" pills>
                 <NavItem>
                   <NavLink
@@ -312,7 +329,7 @@ class machinesDetails extends React.Component {
                 </NavItem>
               </Nav>
             </div>
-          </Row>*/}
+          </Row>
           <Row>
             <Col className="mb-3">
               <CardDeck style={{ display: "flex" }}>
@@ -327,6 +344,7 @@ class machinesDetails extends React.Component {
             </Col>
           </Row>
           <Row>
+            
             <Col className="mb-3">
               <CardDeck style={{ display: "flex" }}>
                 <Card className="card-stats" style={cardStyle}>

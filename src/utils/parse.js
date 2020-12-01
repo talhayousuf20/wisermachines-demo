@@ -1,11 +1,15 @@
-export const parseDataFromSSN = (msg) => {
+export const parseDataFromSSN = (msg, index) => {
   const packets = !isEmpty(msg) ? msg : [];
 
-  const interval = 5;
   let upCount = 0;
   let downCount = 0;
-  let lastHour = 60 * (60 / interval); // 60 min x 60 sec / 5 sec
   let operationCount = 0; // no of times state went from ON to OFF/IDLE
+
+  const interval = 5;
+  const numOfHours =
+    index === 1 ? 1 : index === 2 ? 24 : index === 3 ? 24 * 7 : 1;
+  const lastHour = 60 * (60 / interval); // 60 min x 60 sec / 5 sec
+  const timeFrame = numOfHours * lastHour;
 
   const temperature = packets.map((packet) => {
     return packet.temperature;
@@ -29,11 +33,15 @@ export const parseDataFromSSN = (msg) => {
     return packet.load_current;
   });
 
-  const currentInGivenInterval = loadCurrent.slice(-lastHour);
+  const currentInGivenInterval = loadCurrent.slice(-timeFrame);
+
   const instantPower = currentInGivenInterval.map((current) => {
     return 1.732 * 0.95 * 400 * current;
   });
-  const unitsConsumed = Math.round(arrayAverage(instantPower) / 1000);
+
+  const unitsConsumed = Math.round(
+    (arrayAverage(instantPower) / 1000) * numOfHours
+  );
 
   const machineStateStr = packets.map((packet) => {
     return packet.status;
@@ -49,22 +57,26 @@ export const parseDataFromSSN = (msg) => {
     } else return 0;
   });
 
-  const statesInGivenInterval = machineState.slice(-lastHour);
+  const statesInGivenInterval = machineState.slice(-timeFrame);
   for (let i = 0; i < statesInGivenInterval.length; i++) {
     if (statesInGivenInterval[i] === 2) {
       upCount++;
     } else downCount++;
 
-    if (statesInGivenInterval[i] === 2 && statesInGivenInterval[i + 1] !== 2) {
-      operationCount++;
+    if (statesInGivenInterval[i] === 2) {
+      if (
+        statesInGivenInterval[i + 1] === 1 ||
+        statesInGivenInterval[i + 1] === 0
+      )
+        operationCount++;
     }
   }
 
   const utilization = Math.round(
     (upCount / statesInGivenInterval.length) * 100
   );
-  const uptime = Math.round(upCount / (60 / interval));
-  const downtime = Math.round(downCount / (60 / interval));
+  const uptime = minutesToHours(Math.round(upCount / (60 / interval)));
+  const downtime = minutesToHours(Math.round(downCount / (60 / interval)));
 
   const dateTime = new Date();
   const date = dateTime.toLocaleDateString(undefined, {
@@ -106,4 +118,14 @@ export const isEmpty = (value) => {
 export const arrayAverage = (arr) => {
   const average = arr.reduce((sume, el) => sume + el, 0) / arr.length;
   return average;
+};
+
+const minutesToHours = (minutes) => {
+  if (minutes <= 60) {
+    return minutes;
+  } else {
+    const hh = Math.floor(minutes / 60);
+    const mm = minutes - hh * 60;
+    return `${hh}:${mm}`;
+  }
 };

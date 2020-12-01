@@ -33,13 +33,7 @@ const TemperatureCard = (props) => {
               justifyContent: "center",
             }}
           >
-            <span
-              className={`icon icon-shape bg-${iconColor(
-                props.value
-              )} text-white rounded-circle shadow `}
-            >
-              <i className="fa fa-thermometer-half fa-5x"></i>
-            </span>
+            <i className={`text-${iconColor(props.value)} fa fa-thermometer-half fa-2x`}></i>
             <span className="mr-4"></span>
             <span className={`text-${iconColor(props.value)}`}>
               <span style={{ fontSize: "300%" }}>{props.value}</span>
