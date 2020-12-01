@@ -123,10 +123,16 @@ export const arrayAverage = (arr) => {
 
 const minutesToHours = (minutes) => {
   if (minutes <= 60) {
-    return minutes;
+    return `00:${pad(minutes, 2)}`;
   } else {
     const hh = Math.floor(minutes / 60);
     const mm = minutes - hh * 60;
     return `${hh}:${mm}`;
   }
+};
+
+const pad = (n, width, z) => {
+  z = z || "0";
+  n = n + "";
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 };
