@@ -127,7 +127,7 @@ const minutesToHours = (minutes) => {
   } else {
     const hh = Math.floor(minutes / 60);
     const mm = minutes - hh * 60;
-    return `${hh}:${mm}`;
+    return `${pad(hh, 2)}:${pad(mm, 2)}`;
   }
 };
 

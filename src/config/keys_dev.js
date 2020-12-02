@@ -1,4 +1,4 @@
 export const keys_dev = {
-  SERVER: "http://192.168.0.160:3000",
+  SERVER: "http://115.186.183.129:27000",
   PIN: "123",
 };
