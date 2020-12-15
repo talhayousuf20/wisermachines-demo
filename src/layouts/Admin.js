@@ -169,7 +169,7 @@ class Admin extends React.Component {
         <div className="main-content" ref="mainContent">
           <Switch>
             {this.getRoutes(routes)}
-            <Redirect from="*" to="/admin/home" />
+            <Redirect from="*" to="/" />
           </Switch>
           <Container fluid>
             <AdminFooter />

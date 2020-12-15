@@ -7,6 +7,8 @@ import AuthLayout from "layouts/Auth.js";
 import { Provider } from "react-redux";
 import store from "./store";
 
+import { keys_dev } from "./config/keys_dev";
+
 export default class App extends Component {
   render() {
     return (
@@ -18,7 +20,11 @@ export default class App extends Component {
               render={(props) => <AdminLayout {...props} />}
             />
             <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
-            <Redirect from="/" to="/admin/home" />
+            <Redirect from="/" to={`/admin/dashboard/${keys_dev.KOLSON}`} />
+            <Redirect
+              from="/admin/dashboard/:machine"
+              to={`/admin/dashboard/${keys_dev.KOLSON}`}
+            />
           </Switch>
         </BrowserRouter>
       </Provider>

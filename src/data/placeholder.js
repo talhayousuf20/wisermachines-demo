@@ -23,6 +23,18 @@ export const placeholder = {
     },
   ],
 
+  machines_kolson: [
+    {
+      "_id": "5fd5101d33539e33784774d5",
+      "name": "dry machine",
+      "idle_threshold": 2,
+      "max_load": 20,
+      "sensor_voltage_scalar": 0,
+      "__v": 0
+  }
+    
+  ],
+
   data: {
     "5fb7935777a64b07c4608966": [
       {
@@ -33537,26 +33549,5 @@ export const placeholder = {
       },
     ],
   },
-//   liveData: {
-//     data: {
-//       message_id: "8",
-//       node_id: "70:B3:D5:FE:4D:7A",
-//       temperature: 0,
-//       humidity: 0,
-//       ssn_uptime: "2020-11-23T13:43:59.000Z",
-//       abnormal_activity: "Temperature Sensor CRC Error Condition",
-//       machines: [
-//         {
-//           machine_load_current: 10 * Math.random(),
-//           machine_load_percentage: 0,
-//           machine_status: "OFF",
-//           machine_state_timestamp: "2020-11-23T13:43:59.000Z",
-//           machine_state_duration: 6554,
-//         },
-//       ],
-//     },
-//     MAC: "70:B3:D5:FE:4D:7A",
-//     timeStamp: "2020-11-23T15:15:55.960Z",
-//     "timeStamp-1": "Mon, 23 Nov 2020 15:15:55 GMT",
-//   },
-// };
+
+};
