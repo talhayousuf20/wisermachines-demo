@@ -86,7 +86,7 @@ class AdminNavbar extends React.Component {
                       marginTop: "5px",
                     }}
                   >
-                    WiserMachines
+                    WiserMachines Beta
                   </div>
                 </div>
               </Media>

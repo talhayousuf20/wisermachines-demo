@@ -31,11 +31,11 @@ class Footer extends React.Component {
               © 2018{" "}
               <a
                 className="font-weight-bold ml-1"
-                href="https://www.carepvtltd.com"
+                href="https://www.wisermachines.com"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Care Pvt. Ltd.
+                WiserMachines
               </a>
             </div>
           </Col>
