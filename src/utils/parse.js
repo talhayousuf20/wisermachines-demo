@@ -88,7 +88,9 @@ export const parseDataFromSSN = (msg, index) => {
   });
   const time = dateTime.toLocaleTimeString("en-US");
 
-  return {
+  let resultantObj = {};
+
+  const updatedValues = [
     timeStampStart,
     timeStampEnd,
     loadCurrent,
@@ -103,7 +105,37 @@ export const parseDataFromSSN = (msg, index) => {
     time,
     unitsConsumed,
     operationCount,
-  };
+  ];
+
+  const defaultValues = [0, 0, [], [], [], 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  const values = updatedValues.map((item, index) =>
+    item === undefined || item === null ? defaultValues[index] : item
+  );
+
+  const keys = [
+    "timeStampStart",
+    "timeStampEnd",
+    "loadCurrent",
+    "machineState",
+    "timeStamps",
+    "temperatureNow",
+    "humidityNow",
+    "utilization",
+    "uptime",
+    "downtime",
+    "date",
+    "time",
+    "unitsConsumed",
+    "operationCount",
+  ];
+
+  values.map((value, index) => {
+    resultantObj = { ...resultantObj, [keys[index]]: value };
+    return index;
+  });
+
+  return resultantObj;
 };
 
 export const isEmpty = (value) => {

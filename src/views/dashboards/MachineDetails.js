@@ -20,7 +20,7 @@ import PropTypes from "prop-types";
 
 import { cardStyle } from "../../common/inlineStyles";
 
-import { parseDataFromSSN } from "../../utils/parse";
+import { parseDataFromSSN, isEmpty } from "../../utils/parse";
 import Loader from "react-loader-spinner";
 
 import {
@@ -51,75 +51,17 @@ class machinesDetails extends React.Component {
     this.state = {
       activeNav: 1,
       timeFrameNav: 1,
-      loadCurrent: [],
-      timeStampStart: null,
-      timeStampEnd: null,
-      machineState: [],
-      utilizationValue: 0,
-      utilizationTime: null,
-      OEEValue: 0,
-      OEETime: null,
-      temperature: 0,
-      humidity: 0,
-      uptime: 0,
-      downtime: 0,
-      interval: 5000,
-      timeStamps: [],
-      time: "",
-      date: "",
-      last24HData: [],
       currentMachineID: "",
-      allMachines: [],
-      loading: true,
-      operationCount: 0,
-      unitsConsumed: 0,
       error: null,
+      liveData: {},
     };
   }
-
-  //   static getDerivedStateFromProps(nextProps, prevState) {
-  //     const { last24HData, error } = nextProps;
-
-  //     if (error) {
-  //       return {
-  //         error,
-  //       };
-  //     }
-
-  //     if (nextProps.last24HData !== prevState.last24HData) {
-  //       if (!isEmpty(last24HData)) {
-  //         const parsed = parseDataFromSSN(last24HData, prevState.timeFrameNav);
-  //         return {
-  //           last24HData: last24HData,
-  //           loadCurrent: parsed.loadCurrent,
-  //           timeStampStart: parsed.timeStampStart,
-  //           timeStampEnd: parsed.timeStampEnd,
-  //           machineState: parsed.machineState,
-  //           interval: parsed.interval,
-  //           timeStamps: parsed.timeStamps,
-  //           temperature: parsed.temperatureNow,
-  //           humidity: parsed.humidityNow,
-  //           utilizationValue: parsed.utilization,
-  //           uptime: parsed.uptime,
-  //           downtime: parsed.downtime,
-  //           date: parsed.date,
-  //           time: parsed.time,
-  //           operationCount: parsed.operationCount,
-  //           unitsConsumed: parsed.unitsConsumed,
-  //           error: null,
-  //           allMachines: nextProps.allMachines,
-  //         };
-  //       } else return null;
-  //     } else
-  //       return {
-  //         allMachines: nextProps.allMachines,
-  //       };
-  //   }
 
   async componentDidMount() {
     const { machine } = this.props.match.params;
 
     this.setState({
+      ...this.state,
       currentMachineID: machine,
     });
 
@@ -130,16 +72,27 @@ class machinesDetails extends React.Component {
     client.on(`data-demo-machine-${machine}`, (msg) => {
       try {
         if (msg) {
-          console.log(msg);
+          this.setState({
+            ...this.setState,
+            liveData: msg,
+          });
+        } else {
+          this.setState({
+            ...this.setState,
+            liveData: {},
+          });
         }
       } catch (error) {
+        this.setState({
+          ...this.setState,
+          liveData: {},
+        });
         console.log(error);
       }
     });
   }
 
   componentDidUpdate(prevProps) {
-    this.props.getAllMachines();
     if (this.props.match.params.machine !== prevProps.match.params.machine) {
       window.location.href =
         "/admin/dashboard/" + this.props.match.params.machine;
@@ -149,44 +102,41 @@ class machinesDetails extends React.Component {
   toggleNavs = (e, index) => {
     e.preventDefault();
     this.setState({
+      ...this.state,
       activeNav: index,
     });
   };
 
   toggleTimeFrameNavs = (e, index) => {
     e.preventDefault();
-    const parsed = parseDataFromSSN(this.state.last24HData, index);
     this.setState({
-      last24HData: this.state.last24HData,
-      loadCurrent: parsed.loadCurrent,
-      timeStampStart: parsed.timeStampStart,
-      timeStampEnd: parsed.timeStampEnd,
-      machineState: parsed.machineState,
-      interval: parsed.interval,
-      timeStamps: parsed.timeStamps,
-      temperature: parsed.temperatureNow,
-      humidity: parsed.humidityNow,
-      utilizationValue: parsed.utilization,
-      uptime: parsed.uptime,
-      downtime: parsed.downtime,
-      date: parsed.date,
-      time: parsed.time,
-      operationCount: parsed.operationCount,
-      unitsConsumed: parsed.unitsConsumed,
-      error: null,
+      ...this.state,
       timeFrameNav: index,
     });
   };
 
   render() {
+    const { last24HData } = this.props;
+    const { liveData } = this.state;
+
+    const allData = isEmpty(last24HData)
+      ? []
+      : isEmpty(liveData)
+      ? last24HData
+      : [...last24HData, liveData];
+
+    const parsed = parseDataFromSSN(allData, this.state.timeFrameNav);
+
     const { allMachines } = this.props;
 
     const matchedMachine =
-      allMachines instanceof Array && allMachines.length !== 0
+      allMachines instanceof Array && allMachines[0]
         ? allMachines.filter((machine) => {
-            if (machine._id) {
-              if (machine._id === this.state.currentMachineID) {
-                return machine._id;
+            if (machine) {
+              if (machine._id) {
+                if (machine._id === this.state.currentMachineID) {
+                  return machine._id;
+                }
               }
             }
             return null;
@@ -194,7 +144,7 @@ class machinesDetails extends React.Component {
         : null;
 
     const matchedName = matchedMachine
-      ? matchedMachine.length !== 0
+      ? matchedMachine[0]
         ? matchedMachine[0].name
         : "Loading..."
       : "Loading...";
@@ -202,17 +152,17 @@ class machinesDetails extends React.Component {
     const liveChartContainer =
       this.state.activeNav === 1 ? (
         <CardBody>
-          <CurrentChart chartData={this.state} />
+          <CurrentChart chartData={parsed} />
         </CardBody>
       ) : (
         <CardBody>
-          <StateChart chartData={this.state} />
+          <StateChart chartData={parsed} />
         </CardBody>
       );
 
     const utilizationMeter = (
       <Meter
-        value={this.state.utilizationValue}
+        value={parsed.utilization}
         title={"Utilization"}
         colors={["#ABE5A1"]}
       />
@@ -224,29 +174,26 @@ class machinesDetails extends React.Component {
         fields={["Name"]}
         values={[`${matchedName}`]}
         icon={"fas fa-cogs"}
+        liveData={isEmpty(liveData) ? false : true}
         color={"blue"}
       />
     );
 
     const temperatureCard = (
-      <TemperatureCard value={this.state.temperature} unit={"\u00B0Celcius"} />
+      <TemperatureCard value={parsed.temperatureNow} unit={"\u00B0Celcius"} />
     );
 
     const humidityCard = (
-      <HumidityCard value={this.state.humidity} unit={"%RH"} />
+      <HumidityCard value={parsed.humidityNow} unit={"%RH"} />
     );
 
     const uptimeCard = (
-      <UptimeDowntime
-        value={this.state.uptime}
-        title={"Uptime"}
-        unit={"HH:MM"}
-      />
+      <UptimeDowntime value={parsed.uptime} title={"Uptime"} unit={"HH:MM"} />
     );
 
     const downtimeCard = (
       <UptimeDowntime
-        value={this.state.downtime}
+        value={parsed.downtime}
         title={"Downtime"}
         unit={"HH:MM"}
       />
@@ -254,7 +201,7 @@ class machinesDetails extends React.Component {
 
     const unitsConsumed = (
       <Number
-        value={this.state.unitsConsumed}
+        value={parsed.unitsConsumed}
         icon={"fas fa-bolt fa-2x"}
         title={"Units Consumed"}
         unit={"kilowatt hour"}
@@ -263,16 +210,14 @@ class machinesDetails extends React.Component {
 
     const operationCount = (
       <Number
-        value={this.state.operationCount}
+        value={parsed.operationCount}
         icon={"fas fa-tasks fa-2x"}
         title={"Operation Count"}
         unit={""}
       />
     );
 
-    const dateTimeCard = (
-      <DateTime time={this.state.time} date={this.state.date} />
-    );
+    const dateTimeCard = <DateTime time={parsed.time} date={parsed.date} />;
 
     const content = (
       <>
@@ -407,7 +352,7 @@ class machinesDetails extends React.Component {
         </Container>
       </>
     );
-    const loader = this.state.loading ? (
+    const loader = this.props.loading ? (
       <div className="text-center mb-5">
         <Loader type="ThreeDots" color="#00b386" height={50} />
       </div>
@@ -432,6 +377,7 @@ machinesDetails.propTypes = {
 const mapStateToProps = (state) => ({
   allMachines: state.machines.allMachines,
   last24HData: state.machines.last24HData,
+  loading: state.machines.loading,
   error: state.errors.error,
 });
 

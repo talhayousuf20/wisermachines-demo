@@ -1,7 +1,19 @@
 import React from "react";
 import { Row, Col, Container } from "reactstrap";
+import Loader from "react-loader-spinner";
 
 const Info = (props) => {
+  const animation = props.liveData ? (
+    <Loader
+      type="Bars"
+      color="#525F7F"
+      height={20}
+      style={{ marginLeft: -28 }}
+    />
+  ) : null;
+
+  const liveData = props.liveData ? <p>Recieving real-time updates</p> : null;
+
   return (
     <div>
       <Container>
@@ -20,8 +32,8 @@ const Info = (props) => {
             <p>{props.values[0]}</p>
           </Col>
           <Col>
-            <strong>{props.fields[1]}</strong>
-            <p>{props.values[1]}</p>
+            {animation}
+            {liveData}
           </Col>
         </Row>
       </Container>

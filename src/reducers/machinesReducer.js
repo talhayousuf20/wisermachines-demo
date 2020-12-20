@@ -3,6 +3,7 @@ import { GET_ALL_MACHINES, GET_LAST_24H_DATA } from "../actions/types";
 const initialState = {
   allMachines: [],
   last24HData: [],
+  loading: false,
 };
 
 export default function (state = initialState, action) {
@@ -17,6 +18,13 @@ export default function (state = initialState, action) {
       return {
         ...state,
         last24HData: action.payload,
+        loading: false,
+      };
+
+    case "LOADING":
+      return {
+        ...state,
+        loading: true,
       };
 
     default:

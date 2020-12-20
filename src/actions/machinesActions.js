@@ -28,6 +28,10 @@ export const getAllMachines = () => (dispatch) => {
 };
 
 export const getLast24HDataByMachineID = (machineID) => (dispatch) => {
+  dispatch({
+    type: "LOADING",
+  });
+
   console.log(`GET: ${keys_dev.SERVER}/data/${machineID}`);
   try {
     fetch(`${keys_dev.SERVER}/data/${machineID}`).then((res) => {

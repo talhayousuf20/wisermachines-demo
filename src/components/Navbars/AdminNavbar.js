@@ -40,11 +40,15 @@ class AdminNavbar extends React.Component {
         <span>Loading...</span>
       </DropdownItem>
     );
-    if (allMachines && allMachines.length !== 0) {
-      const machineNames = allMachines.map((machine) => machine.name);
-      const machineIDs = allMachines.map((machine) => machine._id);
-      machinesMenu = machineNames.map((machine) => {
-        return (
+    if (allMachines instanceof Array && allMachines[0]) {
+      const machineNames = allMachines.map((machine) =>
+        machine ? machine.name : null
+      );
+      const machineIDs = allMachines.map((machine) =>
+        machine ? machine._id : null
+      );
+      machinesMenu = machineNames.map((machine) =>
+        machine ? (
           <DropdownItem
             to={`/admin/dashboard/${machineIDs[machineNames.indexOf(machine)]}`}
             tag={Link}
@@ -53,8 +57,8 @@ class AdminNavbar extends React.Component {
             <i className="ni ni-settings-gear-65" />
             <span>{machine}</span>
           </DropdownItem>
-        );
-      });
+        ) : null
+      );
     }
 
     return (
