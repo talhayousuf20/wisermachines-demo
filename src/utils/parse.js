@@ -33,25 +33,29 @@ export const parseDataFromSSN = (msg, index) => {
   const timeFrame = numOfHours * lastHour;
 
   // Parse Packets
-  temperature = packets.map((packet) => {
-    return packet.temperature;
-  });
+  try {
+    temperature = packets.map((packet) => {
+      return packet.temperature;
+    });
 
-  humidity = packets.map((packet) => {
-    return packet.humidity;
-  });
+    humidity = packets.map((packet) => {
+      return packet.humidity;
+    });
 
-  timeStamps = packets.map((packet) => {
-    return Date.parse(packet.timestamp.slice(0, -1));
-  });
+    timeStamps = packets.map((packet) => {
+      return Date.parse(packet.timestamp.slice(0, -1));
+    });
 
-  loadCurrent = packets.map((packet) => {
-    return packet.load_current;
-  });
+    loadCurrent = packets.map((packet) => {
+      return packet.load_current;
+    });
 
-  machineStateStr = packets.map((packet) => {
-    return packet.status;
-  });
+    machineStateStr = packets.map((packet) => {
+      return packet.status;
+    });
+  } catch (error) {
+    console.log(error);
+  }
 
   // Calculate
   try {
