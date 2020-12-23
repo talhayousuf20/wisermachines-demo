@@ -33,6 +33,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.12.1",
     "@giantmachines/redux-websocket": "^1.4.0",
+    "@sentry/react": "^5.29.2",
     "@types/highcharts": "^7.0.0",
     "apexcharts": "^3.22.0",
     "axios": "^0.21.0",
